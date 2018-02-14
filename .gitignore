@@ -1,0 +1,7 @@
+.idea/
+
+# dep generated files
+vendor/
+Gopkg.lock
+
+videodir
