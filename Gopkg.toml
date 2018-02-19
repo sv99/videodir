@@ -24,14 +24,9 @@
 #   go-tests = true
 #   unused-packages = true
 
-
 [[constraint]]
-  name = "github.com/julienschmidt/httprouter"
-  version = "1.1.0"
-
-[[constraint]]
+  name = "github.com/kataras/iris"
   branch = "master"
-  name = "github.com/stvp/go-toml-config"
 
 [prune]
   go-tests = true

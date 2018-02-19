@@ -1,92 +1,171 @@
 package main
 
 import (
-	"log"
-	"fmt"
 	"os"
-	"io/ioutil"
-	"path"
-	"github.com/stvp/go-toml-config"
-	"github.com/julienschmidt/httprouter"
-	"crypto/tls"
-	"crypto/x509"
-	"net/http"
+	"strconv"
+	"path/filepath"
+
+	"github.com/BurntSushi/toml"
+	"github.com/kataras/iris"
+	"github.com/kataras/iris/middleware/logger"
+	"github.com/kataras/iris/middleware/recover"
+	//"github.com/dgrijalva/jwt-go"
+	//jwtmiddleware "github.com/iris-contrib/middleware/jwt"
 )
 
-var (
-	serverAddr = config.String("serverAddr", ":8080")
-	videoDir   = config.String("videoDir", "")
-	cert       = config.String("cert", "cert.pem")
-	key        = config.String("key", "key.pem")
-)
+const VERSION = "0.1"
 
-func Index(w http.ResponseWriter, req *http.Request, _ httprouter.Params) {
-	fmt.Fprintf(w, "videoDir: %s\n", *videoDir)
+type Config struct {
+	ServerAddr string
+	Cert       string
+	Key        string
+	VideoDirs  []string
+	VideoDirsMap map[string]string
+}
+
+type VideoFile struct {
+	VolumeId 	string `json:"volumeid"`
+	Path 	string `json:"path"`
 }
 
 func main() {
-	//log.SetFlags(log.Lshortfile)
-	//get path name for the executable
-	ex, err := os.Executable()
-	if err != nil {
-		log.Println(err)
-		panic(err)
-	}
-	exPath := path.Dir(ex)
-
-	//read configuration
-	if err := config.Parse(path.Join(exPath, "videodir.conf")); err != nil {
-		log.Println(err)
-		panic(err)
-	}
-
-	log.Println("videoDir: ", *videoDir)
-	log.Println("key: ", *key)
-	log.Println("cert: ", *cert)
 
 	//run server
-	certPath := path.Join(exPath, *cert)
-	certBytes, err := ioutil.ReadFile(certPath)
-	if err != nil {
-		log.Fatalln("Unable to read ", certPath, err)
+	app := iris.New()
+	app.Logger().SetLevel("debug")
+
+	app.Use(recover.New())
+	app.Use(logger.New())
+
+	//get path name for the executable
+	//ex, err := os.Executable()
+	//if err != nil {
+	//	app.Logger().Warn(err)
+	//	panic(err)
+	//}
+	//exPath := path.Dir(ex)
+
+	//read configuration
+	conf := Config{
+		ServerAddr: ":8443",
+		Cert:       "server.crt",
+		Key:        "server.key",
+	}
+	if _, err := toml.DecodeFile("./videodir.conf", &conf); err != nil {
+		app.Logger().Warn("Config problems: " + err.Error())
 	}
 
-	myCertPool := x509.NewCertPool()
-	if ok := myCertPool.AppendCertsFromPEM(certBytes); !ok {
-		log.Fatalln("Unable to add certificate to certificate pool")
+	// init conf.VideoDirsMap
+	conf.VideoDirsMap = make(map[string]string)
+
+	app.Logger().Info("key: ", conf.Key)
+	app.Logger().Info("cert: ", conf.Cert)
+	for i, s := range conf.VideoDirs {
+		conf.VideoDirsMap[strconv.Itoa(i)] = s
+		app.Logger().Info("videoDir[", strconv.Itoa(i), "] = ", s)
 	}
 
-	tlsConfig := &tls.Config{
-		// Reject any TLS certificate that cannot be validated
-		ClientAuth: tls.RequireAndVerifyClientCert,
-		// Ensure that we only use our "CA" to validate certificates
-		ClientCAs: myCertPool,
-		// PFS because we can
-		CipherSuites: []uint16{tls.TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384},
-		// Force it server side
-		PreferServerCipherSuites: true,
-		// TLS 1.2 because we can
-		MinVersion: tls.VersionTLS12,
+	app.Favicon("./favicon.ico")
+
+	app.RegisterView(iris.HTML("./", ".html"))
+	app.Get("/", func(ctx iris.Context) {
+		ctx.View("index.html")
+	})
+
+	//app.StaticWeb("/video1", *videoDir1)
+
+	v1 := app.Party("/api/v1")
+	{
+		v1.Get("/version", func(ctx iris.Context) {
+			ver := iris.Map{"version": VERSION}
+			ctx.JSON(ver)
+			ver = nil
+		})
+
+		v1.Get("/list", func(ctx iris.Context) {
+			ctx.JSON(conf.VideoDirsMap)
+		})
+
+		v1.Get("/list/{volume}", func(ctx iris.Context) {
+			volumeId := ctx.Params().Get("volume")
+			videoDir := conf.VideoDirsMap[volumeId]
+			if videoDir == "" {
+				ctx.StatusCode(iris.StatusBadRequest)
+				ctx.JSON(iris.Map{"status": iris.StatusBadRequest, "error": "volume" + volumeId})
+				return
+			}
+
+			vd, err := filepath.Abs(videoDir)
+			vdLen := len(vd)
+			if err != nil {
+				app.Logger().Error("Get full path error", videoDir)
+				ctx.StatusCode(iris.StatusBadRequest)
+				ctx.JSON(iris.Map{"status": iris.StatusBadRequest, "error": vd})
+				return
+			}
+
+			if _, err := os.Stat(vd); os.IsNotExist(err) {
+				app.Logger().Error("Video dir not exists: ", vd)
+				ctx.StatusCode(iris.StatusBadRequest)
+				ctx.JSON(iris.Map{"status": iris.StatusBadRequest, "error": vd})
+				return
+			}
+
+			list := make([]string, 0, 10)
+
+			app.Logger().Info("list video dir: ", vd)
+			err = filepath.Walk(vd, func(path string, info os.FileInfo, err error) error {
+				if info.IsDir() {
+					return nil
+				}
+				list = append(list, path[vdLen:])
+				return nil
+			})
+			if err != nil {
+				ctx.StatusCode(iris.StatusRequestedRangeNotSatisfiable)
+				ctx.JSON(iris.Map{"error": "volume" + volumeId})
+				return
+			}
+
+			ctx.JSON(list)
+		})
+
+		v1.Post("/file", func(ctx iris.Context) {
+			var vf VideoFile
+			err := ctx.ReadJSON(&vf)
+			if err != nil {
+				app.Logger().Error("file get ReadJSON error: ", err.Error())
+				ctx.StatusCode(iris.StatusBadRequest)
+				ctx.JSON(iris.Map{"status": iris.StatusBadRequest, "error": err.Error()})
+				return
+			}
+			if vf.VolumeId == "" || vf.Path == "" {
+				app.Logger().Error("file get not defined VolumeId or Path")
+				ctx.StatusCode(iris.StatusBadRequest)
+				ctx.JSON(iris.Map{"status": iris.StatusBadRequest, "error": "not defined VolumeId or Path"})
+				return
+			}
+
+			fp, err := filepath.Abs(filepath.Join(conf.VideoDirsMap[vf.VolumeId], vf.Path))
+			if err != nil {
+				app.Logger().Error("Video file get full path error", vf.VolumeId)
+				ctx.StatusCode(iris.StatusBadRequest)
+				ctx.JSON(iris.Map{"status": iris.StatusBadRequest, "error": vf.VolumeId})
+				return
+			}
+
+			if _, err := os.Stat(fp); os.IsNotExist(err) {
+				app.Logger().Error("Video file not exists: ", fp)
+				ctx.StatusCode(iris.StatusBadRequest)
+				ctx.JSON(iris.Map{"status": iris.StatusBadRequest, "error": fp})
+				return
+			}
+
+			app.Logger().Info("Send file: ", fp)
+			ctx.SendFile(fp, filepath.Base(fp))
+		})
 	}
 
-	tlsConfig.BuildNameToCertificate()
-
-	router := httprouter.New()
-	router.GET("/", Index)
-	router.ServeFiles("/video/*filepath", http.Dir(*videoDir))
-
-	httpServer := &http.Server{
-		Addr:      *serverAddr,
-		Handler:   router,
-		TLSConfig: tlsConfig,
-	}
-
-	log.Println(httpServer.ListenAndServeTLS(certPath, path.Join(exPath, *key)))
-
-	// Start the HTTPS server in a goroutine
-	//fmt.Println(fmt.Sprintf("Start server on https://localhost%s", *serverAddr))
-	//go http.ListenAndServeTLS(":8081", "cert.pem", "key.pem", router)
-	// Start the HTTP server
-	//log.Println(fmt.Sprintf("Start server on http://localhost%s", *serverAddr))
-	//http.ListenAndServe(*serverAddr, router)
+	app.Configure(iris.WithCharset("UTF-8"))
+	app.Run(iris.TLS(conf.ServerAddr, conf.Cert, conf.Key))
 }

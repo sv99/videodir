@@ -2,6 +2,15 @@
 
 # dep generated files
 vendor/
-Gopkg.lock
 
+# working build
 videodir
+videodir.exe
+
+# https certificats
+server.crt
+server.key
+
+# video samples
+video1/
+
