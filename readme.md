@@ -14,7 +14,7 @@ videodir
     ├── videodir.conf
     ├── *.crt
     ├── *.key
-    ├── .htpasswd
+    ├── htpasswd
     ├── favicon.ico
     └── index.html
 
@@ -84,28 +84,22 @@ videodir
 События - EventXXX непосредственно в папках для каждого дня.
 
 Предположительно, при перекрытии года файлы попадут в ту же папку.
-В имени файла присутствует полынй год - конфликта имен не будет.
+В имени файла присутствует полный год - конфликта имен не будет.
 
 dependencies using dep
 ----------------------
 
+Не хранит историю git - только актуалные файлы. В результате получаем очень
+компактный размер папки vendor. На текущий момент меньше 8Мб.
+
+Пришлось сделать форк для github.com/foomo/htpasswd - оригинальный
+пакет не компилируется под 386 битную систему - ошибка переполнения int.
+В авторском репозитарии уже 2 года висит patch request.
+   
     brew install dep
     dep init
-    dep ensure
-
-https
------
-
-    # Key considerations for algorithm "ECDSA" ≥ secp384r1
-    # List ECDSA the supported curves (openssl ecparam -list_curves)
-    openssl ecparam -genkey -name secp384r1 -out server.key
-
-    # Generation of self-signed(x509) public key (PEM-encodings .pem|.crt) based on the private (.key)
-    openssl req -new -x509 -sha256 -key server.key -out server.crt -days 3650
-
-Использовал сгенерированные на основании rost.cert RSA ключи.
-
-Этот же ключ используется для подписи и проверки JWT Token.
+    # -v show extended log
+    dep ensure -v
 
 web framework
 -------------
@@ -140,35 +134,50 @@ videodir.conf - TOML format
 Также двойной слэш возвращается и в результатах запросов с windows
 сервера.
 
-REST API
+Handlers
 --------
 
-API                    | Query Type | Result
+Handlers               | Query Type | Result
 ---------------------- | ---------- | ------
+/                      | GET        | return index.html no auth
+/login                 | POST       | post {"username: "some", "password": "pass"} return {"token": "JWT TOKEN"}
 /api/v1/version        | GET        | return {"version": "0.1"}
 /api/v1/volumes        | GET        | get array volumes with video dirs
-/api/v1/list           | POST       | get directory list { "path": [ "/24-01-18 01/" ] } for all volumes, path may be empty for root directory
-/api/v1/file           | POST       | get file { "path": [ "/24-01-18 01/", "0._02" ] } find path on all volumes and return file stream, path not may be empty
+/api/v1/list           | POST       | post { "path": [ "/24-01-18 01/" ] } get directory list scan all volumes, path may be empty for root directory
+/api/v1/file           | POST       | post { "path": [ "/24-01-18 01/", "0._02" ] } get file scan all volumes and return file stream, path not may be empty
 
-
-path передаем как массив строк, в противном случае, когда 
+path передаем как массив элементов пути, в противном случае, когда 
 передаем путь из windows система видит ескейп последовательности
-вместо путей
+вместо путей.
 
 POST api tested in Postman
 
 security
 --------
 
-    # create .htpasswd with bcrypt hashes
-    htpasswd -cbB .htpasswd admin admin
-    # add or update bcrypt hash
-    htpasswd -bB .htpasswd dima dima
-    
 Use HTTPS и JWT token
 
-JWT Token подписываем и проверяем тем же ключом, который использем
-для HTTPS.
+Для HTTPS использовал RSA ключи, эти же ключи использовал для
+подписи и проверки JWT. RSA используется в JWT библиотеке, 
+менять ничего не хотелось. 
+
+    openssl req \
+        -x509 \
+        -nodes \
+        -newkey rsa:2048 \
+        -keyout server.key \
+        -out server.crt \
+        -days 3650 \
+        -subj "/C=RU/ST=SanktPetersburg/L=SanktPetersburg/O=Security/OU=IT Department/CN=*"
+
+Использовал сгенерированные на основании rost.cert RSA ключи.
+
+Пароли хранив в htpasswd - точку перед именем очень не любит Windows
+
+    # create htpasswd with bcrypt hashes
+    htpasswd -cbB htpasswd admin admin
+    # add or update bcrypt hash
+    htpasswd -bB htpasswd dima dima
 
 windows service
 ---------------
@@ -176,19 +185,24 @@ windows service
 Никаких особых действий с сервисом не нужно, можно попробовать
 утилиту [NSSM](http://nssm.cc/) и посмотреть что из этого выйдет.
 
+    nssm install videodir C:/tools/videodir/videodir.exe
+    # GUI edit params
+    nssm edit videodir
+    nssm remove videodir
+
+    nssm start videodir
+    nssm stop videodir
+    nssm restart videodir
+    
 Альтернативный вариант - сервис Windows на базе пакета [svc](https://github.com/golang/sys/tree/master/windows/svc)
 
 todo
 ----
 
-1. лог в файл
-
 1.  Возможно использование дополнительных параметров командной строки для
-работы с паролями в .htpasswd  
+работы с паролями в htpasswd  
 
-1. Test
-
-2. Production - windows service
+2. Test
 
 3. Тестирование на предмет утечек памяти в реальных условиях
 Проблема не подтверждена. Вызов сборщика мусора не мгновенный но

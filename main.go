@@ -136,9 +136,9 @@ func main() {
 	}
 
 	// read .htpasswd
-	conf.passwords, err = htpasswd.ParseHtpasswdFile(".htpasswd")
+	conf.passwords, err = htpasswd.ParseHtpasswdFile("htpasswd")
 	if err != nil {
-		app.Logger().Fatal("read .htpasswd error: ", err.Error())
+		app.Logger().Fatal("read htpasswd error: ", err.Error())
 		return
 	}
 
@@ -286,6 +286,47 @@ func main() {
 			}
 			ctx.SendFile(fp, filepath.Base(fp))
 			app.Logger().Info("Send file: ", fp)
+		})
+
+		v1.Post("/filesize", func(ctx iris.Context) {
+			var vf Path
+			err := ctx.ReadJSON(&vf)
+			if err != nil {
+				app.Logger().Error("file get ReadJSON error: ", err.Error())
+				ctx.StatusCode(iris.StatusBadRequest)
+				ctx.JSON(iris.Map{"status": iris.StatusBadRequest, "error": err.Error()})
+				return
+			}
+
+			// empty path not available
+			if len(vf.Path) == 0 {
+				app.Logger().Error("file path not specified")
+				ctx.StatusCode(iris.StatusBadRequest)
+				ctx.JSON(iris.Map{"status": iris.StatusBadRequest, "error": "file path not specified"})
+				return
+			}
+
+			var fp = ""
+			var size int64 = 0
+			for _, volume := range conf.VideoDirs {
+
+				fp, err = filepath.Abs(filepath.Join(volume, filepath.Join(vf.Path...)))
+				if err != nil {
+					app.Logger().Error("Video file get full path error " + err.Error())
+					ctx.StatusCode(iris.StatusBadRequest)
+					ctx.JSON(iris.Map{"status": iris.StatusBadRequest, "error": err.Error()})
+					return
+				}
+
+				stat, err := os.Stat(fp)
+				if os.IsNotExist(err) {
+					continue
+				}
+				size = stat.Size()
+				break
+			}
+			ctx.JSON(iris.Map{"size": size})
+			app.Logger().Info("Get file size: ", fp)
 		})
 	}
 
