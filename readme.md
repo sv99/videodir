@@ -1,10 +1,22 @@
 videodir
 ========
 
-Доступ к каталогу с видеофайлами на локальном компьютере.
+Доступ к каталогу с видеофайлами на видеорегистраторе.
+Интересуют видеорегистраторы ITV Intellect и Geovision.
+Использование для архивирования с удаленного клиента.
 
-Через REST список файлов и выгрузка отдельных файлов, как статики
-или через REST запрос.
+Через REST API список файлов и выгрузка отдельных файлов.
+
+Нужные для работы файлы:
+
+    VIDEODIR
+    ├── videodir.exe
+    ├── videodir.conf
+    ├── favicon.ico
+    ├── *.crt
+    ├── *.key
+    ├── .htpasswd
+    └── index.html
 
 Структура каталогов ITV
 -----------------------
@@ -14,14 +26,15 @@ videodir
     │   ├── 1._15
     │   ├── 1._18
     │   ├── 1._19
-    │   ├── A._02
-    ├── 24-01-18 02
-    │   ├── 0._01
-    │   ├── 0._02
-    │   ├── 0._04
+    │   └── A._02
+    └── 24-01-18 02
+        ├── 0._01
+        ├── 0._02
+        └── 0._04
 
-Каталог VIDEO в нем папки - имя **DD-MM-YY HH** и внутри
-этих папок файлы видео.
+Структура каталог VIDEO одноуровневая - папки **DD-MM-YY HH** для каждого часа
+и внутри этих папок файлы видео. Номер камеры в расширении видеофайлов,
+0._04 - видеофайл для 4 камеры. 
 
 На живом сервере на 2Тб разделе почти 2000 папок и больше 700 000
 файлов.
@@ -29,6 +42,49 @@ videodir
 Запрос на получение всех файлов раздела обрабатывается по
 локальной сети больше 8 мин. _Нужно обрабатывать данные по каждой
 папке отдельно._
+
+Структура каталогов Geovision
+-----------------------------
+
+    VIDEO
+    ├── cam01
+    │   ├── 0101
+    │   │   ├── Event20180101102142001
+    │   │   ├── Event20180101122042001
+    │   │   ├── Event20180101182042001
+    │   │   └── Event20180101222042001
+    │   ├── 0102
+    │   │   ├── Event20180102102142001
+    │   │   ├── Event20180102122042001
+    │   │   ├── Event20180102182042001
+    │   │   └── Event20180102222042001
+    │   ├── 1230
+    │   │   ├── Event20171230102142001
+    │   │   ├── Event20171230122042001
+    │   │   └── Event20171230182042001
+    │   └── 1231
+    │       ├── Event20171231102142001
+    │       ├── Event20171231122042001
+    │       └── Event20171231182042001
+    ├── aud01
+    │   └── 0101
+    │       ├── Event20180101102142001
+    │       ├── Event20180101122042001
+    │       ├── Event20180101182042001
+    │       └── Event20180101222042001
+    └── aud02
+        └── 0102
+            ├── Event20180101102142001
+            ├── Event20180101122042001
+            ├── Event20180101182042001
+            └── Event20180101222042001
+
+Структура каталога VIDEO двухуровневая сначала папки по камерам
+и микрофонам и внутри них папки по месяцам и дням.
+События - EventXXX непосредственно в папках для каждого дня.
+
+Предположительно, при перекрытии года файлы попадут в ту же папку.
+В имени файла присутствует полынй год - конфликта имен не будет.
 
 dependencies using dep
 ----------------------
@@ -47,6 +103,9 @@ https
     # Generation of self-signed(x509) public key (PEM-encodings .pem|.crt) based on the private (.key)
     openssl req -new -x509 -sha256 -key server.key -out server.crt -days 3650
 
+Использовал сгенерированные на основании rost.cert RSA ключи.
+
+Этот же ключ используется для подписи и проверки JWT Token.
 
 web framework
 -------------
@@ -61,7 +120,7 @@ cross compilation
     # compiling with additional environment variable
     GOOS=windows GOARCH=386 go build -o videodir.exe
 
-Настроил дополнительную конфигурацию.
+Настроил дополнительную конфигурацию для генерации videodir.exe.
 
 config
 ------
@@ -77,7 +136,9 @@ videodir.conf - TOML format
     # array pathes for video data directories
     VideoDirs = [ "./video1/", "./video2/" ]
 
-В windows нужно удваивать обратный слэш для VideoDirs
+В windows нужно удваивать обратный слэш для VideoDirs.
+Также двойной слэш возвращается и в результатах запросов с windows
+сервера.
 
 REST API
 --------
@@ -85,27 +146,52 @@ REST API
 API                    | Query Type | Result
 ---------------------- | ---------- | ------
 /api/v1/version        | GET        | return {"version": "0.1"}
-/api/v1/list           | GET        | list video dirs
-/api/v1/list/{number}  | GET        | list files in video dirs
-/api/v1/file           | POST       | get file {"volumeid": "0", "path": "/24-01-18 01/0._02"}
+/api/v1/volumes        | GET        | get array volumes with video dirs
+/api/v1/list           | POST       | get directory list { "path": [ "/24-01-18 01/" ] } for all volumes, path may be empty for root directory
+/api/v1/file           | POST       | get file { "path": [ "/24-01-18 01/", "0._02" ] } find path on all volumes and return file stream, path not may be empty
+
+
+path передаем как массив строк, в противном случае, когда 
+передаем путь из windows система видит ескейп последовательности
+вместо путей
 
 POST api tested in Postman
 
 security
 --------
 
-HTTPS и логин
+    # create .htpasswd with bcrypt hashes
+    htpasswd -cbB .htpasswd admin admin
+    # add or update bcrypt hash
+    htpasswd -bB .htpasswd dima dima
+    
+Use HTTPS и JWT token
+
+JWT Token подписываем и проверяем тем же ключом, который использем
+для HTTPS.
 
 windows service
 ---------------
 
-fff
+Никаких особых действий с сервисом не нужно, можно попробовать
+утилиту [NSSM](http://nssm.cc/) и посмотреть что из этого выйдет.
+
+Альтернативный вариант - сервис Windows на базе пакета [svc](https://github.com/golang/sys/tree/master/windows/svc)
 
 todo
 ----
 
-6. JWT auth
+1. лог в файл
 
-7. Test
+1.  Возможно использование дополнительных параметров командной строки для
+работы с паролями в .htpasswd  
 
-9. Production - windows servise 
+1. Test
+
+2. Production - windows service
+
+3. Тестирование на предмет утечек памяти в реальных условиях
+Проблема не подтверждена. Вызов сборщика мусора не мгновенный но
+предсказуемый. Нужно отследить долговременное выделение памяти.
+
+4. Распределение проекта по отдлельным файлам.

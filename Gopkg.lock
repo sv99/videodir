@@ -185,12 +185,6 @@
   revision = "542fd4642604d0d0c26112396ce5b1a9d01eee0b"
 
 [[projects]]
-  name = "github.com/pelletier/go-toml"
-  packages = ["."]
-  revision = "acdc4509485b587f5e675510c4f2c63e90ff68a8"
-  version = "v1.1.0"
-
-[[projects]]
   branch = "master"
   name = "github.com/ryanuber/columnize"
   packages = ["."]
@@ -210,16 +204,18 @@
 
 [[projects]]
   branch = "master"
-  name = "github.com/stvp/go-toml-config"
+  name = "github.com/sv99/htpasswd"
   packages = ["."]
-  revision = "314328849d78e1c9193d27bdd22724a527636b30"
+  revision = "8207f94e1bbffcad7d618095b5539c1980f13c81"
 
 [[projects]]
   branch = "master"
   name = "golang.org/x/crypto"
   packages = [
     "acme",
-    "acme/autocert"
+    "acme/autocert",
+    "bcrypt",
+    "blowfish"
   ]
   revision = "650f4a345ab4e5b245a3034b110ebc7299e68186"
 
@@ -253,6 +249,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "691adb497ac5cd1a355008998683080b67443aba087fb86af2754501d23dcf5e"
+  inputs-digest = "ddd207df1fd110718a9f76df9944e6303b19e73b4d22b0b22766e0568489ad5f"
   solver-name = "gps-cdcl"
   solver-version = 1

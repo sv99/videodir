@@ -11,6 +11,7 @@ videodir.exe
 server.crt
 server.key
 
-# video samples
+# video samples and log
 video1/
+log/
 
