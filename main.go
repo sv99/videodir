@@ -21,7 +21,7 @@ import (
 	jwtmiddleware "github.com/iris-contrib/middleware/jwt"
 )
 
-const VERSION = "0.1"
+const VERSION = "0.2"
 
 type Config struct {
 	LogLevel   string
@@ -46,17 +46,6 @@ type Token struct {
 type UserCredentials struct {
 	Username string `json:"username"`
 	Password string `json:"password"`
-}
-
-type User struct {
-	ID       int    `json:"id"`
-	Name     string `json:"name"`
-	Username string `json:"username"`
-	Password string `json:"password"`
-}
-
-type Response struct {
-	Data string `json:"data"`
 }
 
 func validate(user *UserCredentials, conf *Config) bool {

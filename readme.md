@@ -10,13 +10,13 @@ videodir
 Нужные для работы файлы:
 
     VIDEODIR
-    ├── videodir.exe
-    ├── videodir.conf
-    ├── favicon.ico
-    ├── *.crt
-    ├── *.key
-    ├── .htpasswd
-    └── index.html
+    ├── videodir.exe
+    ├── videodir.conf
+    ├── *.crt
+    ├── *.key
+    ├── .htpasswd
+    ├── favicon.ico
+    └── index.html
 
 Структура каталогов ITV
 -----------------------
