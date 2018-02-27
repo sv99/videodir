@@ -1,6 +1,7 @@
 package main
 
 import (
+	"errors"
 	"os"
 	"time"
 	"path/filepath"
@@ -74,6 +75,30 @@ func newLogFile() *os.File {
 	return f
 }
 
+func sendJsonError(app *iris.Application, ctx iris.Context, status int, message string) {
+	app.Logger().Error(message)
+	ctx.StatusCode(status)
+	ctx.JSON(iris.Map{"status": status, "error": message})
+}
+
+func readJsonPath(app *iris.Application, ctx iris.Context) (Path, error) {
+	var vf Path
+	err := ctx.ReadJSON(&vf)
+	if err != nil {
+		sendJsonError(app, ctx, iris.StatusBadRequest,
+			"filesize ReadJSON error: " + err.Error())
+		return vf, err
+	}
+
+	// empty path not available
+	if len(vf.Path) == 0 {
+		sendJsonError(app, ctx, iris.StatusBadRequest,
+			"file path not specified")
+		return vf, errors.New("file path not specified")
+	}
+	return vf, nil
+}
+
 func main() {
 
 	app := iris.New()
@@ -110,7 +135,7 @@ func main() {
 	app.Logger().SetLevel(conf.LogLevel)
 
 	// read private key
-	app.Logger().Info("key: ", conf.Key)
+	app.Logger().Debug("key: ", conf.Key)
 	signBytes, err := ioutil.ReadFile(conf.Key)
 	if err != nil {
 		app.Logger().Fatal("read key file error: ", err.Error())
@@ -123,7 +148,7 @@ func main() {
 	}
 
 	// read public key from certificate
-	app.Logger().Info("cert: ", conf.Cert)
+	app.Logger().Debug("cert: ", conf.Cert)
 	certBytes, err := ioutil.ReadFile(conf.Cert)
 	if err != nil {
 		app.Logger().Fatal("read certificate file error: ", err.Error())
@@ -153,17 +178,15 @@ func main() {
 		var user UserCredentials
 		err := ctx.ReadJSON(&user)
 		if err != nil {
-			app.Logger().Error("user credentials read error: ", err.Error())
-			ctx.StatusCode(iris.StatusBadRequest)
-			ctx.JSON(iris.Map{"status": iris.StatusBadRequest, "error": err.Error()})
+			sendJsonError(app, ctx, iris.StatusBadRequest,
+				"user credentials read error: " + err.Error())
 			return
 		}
 
 		// validate username and password
 		if !validate(&user, &conf) {
-			ctx.StatusCode(iris.StatusUnauthorized)
-			app.Logger().Error("user credentials check error: ", user.Username)
-			ctx.JSON(iris.Map{"status": iris.StatusUnauthorized, "error": "Invalid credentials"})
+			sendJsonError(app, ctx, iris.StatusUnauthorized,
+				"user credentials read error: " + err.Error())
 			return
 		}
 
@@ -176,9 +199,8 @@ func main() {
 
 		tokenString, err := token.SignedString(conf.signKey)
 		if err != nil {
-			ctx.StatusCode(iris.StatusInternalServerError)
-			app.Logger().Error("Error while signing the token")
-			ctx.JSON(iris.Map{"status": iris.StatusUnauthorized, "error": "Error while signing the token"})
+			sendJsonError(app, ctx, iris.StatusInternalServerError,
+				"Error while signing the token: " + err.Error())
 			return
 		}
 
@@ -213,9 +235,8 @@ func main() {
 			var vf Path
 			err := ctx.ReadJSON(&vf)
 			if err != nil {
-				app.Logger().Error("file get ReadJSON error: ", err.Error())
-				ctx.StatusCode(iris.StatusBadRequest)
-				ctx.JSON(iris.Map{"status": iris.StatusBadRequest, "error": err.Error()})
+				sendJsonError(app, ctx, iris.StatusBadRequest,
+					"file get ReadJSON error: " + err.Error())
 				return
 			}
 
@@ -224,9 +245,8 @@ func main() {
 			for _, volume := range conf.VideoDirs {
 				vd, err := filepath.Abs(filepath.Join(volume, filepath.Join(vf.Path...)))
 				if err != nil {
-					app.Logger().Error("Get full path error", vf.Path)
-					ctx.StatusCode(iris.StatusBadRequest)
-					ctx.JSON(iris.Map{"status": iris.StatusBadRequest, "error": vd})
+					sendJsonError(app, ctx, iris.StatusInternalServerError,
+						"Get full path error: " + err.Error())
 					return
 				}
 
@@ -237,9 +257,9 @@ func main() {
 
 				files, err := ioutil.ReadDir(vd)
 				if err != nil {
-					app.Logger().Error("Read dir error: ", err.Error())
-					ctx.StatusCode(iris.StatusBadRequest)
-					ctx.JSON(iris.Map{"status": iris.StatusBadRequest, "error": err.Error()})
+					sendJsonError(app, ctx, iris.StatusInternalServerError,
+						"Read dir error: " + err.Error())
+					return
 				}
 
 				for _, f := range files {
@@ -251,20 +271,8 @@ func main() {
 		})
 
 		v1.Post("/file", func(ctx iris.Context) {
-			var vf Path
-			err := ctx.ReadJSON(&vf)
+			vf, err := readJsonPath(app, ctx)
 			if err != nil {
-				app.Logger().Error("file get ReadJSON error: ", err.Error())
-				ctx.StatusCode(iris.StatusBadRequest)
-				ctx.JSON(iris.Map{"status": iris.StatusBadRequest, "error": err.Error()})
-				return
-			}
-
-			// empty path not available
-			if len(vf.Path) == 0 {
-				app.Logger().Error("file path not specified")
-				ctx.StatusCode(iris.StatusBadRequest)
-				ctx.JSON(iris.Map{"status": iris.StatusBadRequest, "error": "file path not specified"})
 				return
 			}
 
@@ -273,9 +281,8 @@ func main() {
 
 				fp, err = filepath.Abs(filepath.Join(volume, filepath.Join(vf.Path...)))
 				if err != nil {
-					app.Logger().Error("Video file get full path error " + err.Error())
-					ctx.StatusCode(iris.StatusBadRequest)
-					ctx.JSON(iris.Map{"status": iris.StatusBadRequest, "error": err.Error()})
+					sendJsonError(app, ctx, iris.StatusBadRequest,
+						"Video file get full path error: " + err.Error())
 					return
 				}
 
@@ -289,20 +296,8 @@ func main() {
 		})
 
 		v1.Post("/filesize", func(ctx iris.Context) {
-			var vf Path
-			err := ctx.ReadJSON(&vf)
+			vf, err := readJsonPath(app, ctx)
 			if err != nil {
-				app.Logger().Error("file get ReadJSON error: ", err.Error())
-				ctx.StatusCode(iris.StatusBadRequest)
-				ctx.JSON(iris.Map{"status": iris.StatusBadRequest, "error": err.Error()})
-				return
-			}
-
-			// empty path not available
-			if len(vf.Path) == 0 {
-				app.Logger().Error("file path not specified")
-				ctx.StatusCode(iris.StatusBadRequest)
-				ctx.JSON(iris.Map{"status": iris.StatusBadRequest, "error": "file path not specified"})
 				return
 			}
 
@@ -312,9 +307,8 @@ func main() {
 
 				fp, err = filepath.Abs(filepath.Join(volume, filepath.Join(vf.Path...)))
 				if err != nil {
-					app.Logger().Error("Video file get full path error " + err.Error())
-					ctx.StatusCode(iris.StatusBadRequest)
-					ctx.JSON(iris.Map{"status": iris.StatusBadRequest, "error": err.Error()})
+					sendJsonError(app, ctx, iris.StatusBadRequest,
+						"Video file get full path error: " + err.Error())
 					return
 				}
 

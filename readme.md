@@ -172,7 +172,7 @@ Use HTTPS и JWT token
 
 Использовал сгенерированные на основании rost.cert RSA ключи.
 
-Пароли хранив в htpasswd - точку перед именем очень не любит Windows
+Пароли храним в htpasswd - точку перед именем очень не любит Windows.
 
     # create htpasswd with bcrypt hashes
     htpasswd -cbB htpasswd admin admin
@@ -182,8 +182,15 @@ Use HTTPS и JWT token
 windows service
 ---------------
 
-Никаких особых действий с сервисом не нужно, можно попробовать
-утилиту [NSSM](http://nssm.cc/) и посмотреть что из этого выйдет.
+Использовал для запуска сервиса утилиту [NSSM](http://nssm.cc/).
+Результаты положительные. Можно не использовать свой лог файл.
+NSSM позволяет перенаправить stdout и stderr в файл, в качестве бонуса
+возможность настроить ротацию логов, правда она срабатывает только
+при рестарте сервиса.
+
+Первоначальное тестирование на предмет утечек памяти дало положительные
+результаты. Память освобождается не очень быстро, но предсказуемо.
+При пересылке файлов программа не занимала больше 20Мб.
 
     nssm install videodir C:/tools/videodir/videodir.exe
     # GUI edit params
@@ -194,7 +201,8 @@ windows service
     nssm stop videodir
     nssm restart videodir
     
-Альтернативный вариант - сервис Windows на базе пакета [svc](https://github.com/golang/sys/tree/master/windows/svc)
+Альтернативный вариант - полноценный сервис Windows на базе
+пакета [svc](https://github.com/golang/sys/tree/master/windows/svc)
 
 todo
 ----
