@@ -8,6 +8,7 @@ videodir.exe
 # https certificats
 server.crt
 server.key
+htpasswd
 
 # video samples and log
 video1/
