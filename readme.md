@@ -92,19 +92,26 @@ dependencies using dep
 Не хранит историю git - только актуалные файлы. В результате получаем очень
 компактный размер папки vendor. На текущий момент меньше 8Мб.
 
-Пришлось сделать форк для github.com/foomo/htpasswd - оригинальный
+```bash
+brew install dep
+dep init
+# -v show extended log
+dep ensure -v
+```
+
+Using:
+ 
+[iris](https://iris-go.com) WEB framework for REST
+ 
+[JWT auth](https://github.com/dgrijalva/jwt-go) + [JWT middleware for iris](github.com/iris-contrib/middleware/jwt) 
+
+[TOML](https://github.com/BurntSushi/toml) for config
+
+[htpasswd](https://github.com/foomo/htpasswd) Пришлось сделать форк - оригинальный
 пакет не компилируется под 386 битную систему - ошибка переполнения int.
 В авторском репозитарии уже 2 года висит patch request.
-   
-    brew install dep
-    dep init
-    # -v show extended log
-    dep ensure -v
 
-web framework
--------------
-
-Using [iris](https://iris-go.com) and REST with JWT auth. 
+[CLI](https://github.com/teris-io/cli) for parsing command line
 
 cross compilation
 -----------------
@@ -178,6 +185,39 @@ Use HTTPS и JWT token
     htpasswd -cbB htpasswd admin admin
     # add or update bcrypt hash
     htpasswd -bB htpasswd dima dima
+
+CLI для работы с htpasswd
+
+```bash
+>videodir -h
+
+Description:
+    videodir tool
+
+Sub-commands:
+    videodir list     list users from htpasswd
+    videodir add      add or update user in the htpasswd
+    videodir remove   remove user from htpasswd
+
+>videodir add --help
+videodir add <name> <password>
+
+Description:
+    add or update user in the htpasswd
+
+Arguments:
+    name       user name
+    password   password
+    
+>videodir remove --help
+ videodir remove <name>
+ 
+ Description:
+     remove user from htpasswd
+ 
+ Arguments:
+     name   user name
+```
 
 windows service
 ---------------

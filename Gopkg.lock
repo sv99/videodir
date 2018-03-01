@@ -209,6 +209,12 @@
   revision = "8207f94e1bbffcad7d618095b5539c1980f13c81"
 
 [[projects]]
+  name = "github.com/teris-io/cli"
+  packages = ["."]
+  revision = "903598a017880e40a9edea0b45eabf00ff24ab60"
+  version = "v1.0.1"
+
+[[projects]]
   branch = "master"
   name = "golang.org/x/crypto"
   packages = [
@@ -249,6 +255,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "ddd207df1fd110718a9f76df9944e6303b19e73b4d22b0b22766e0568489ad5f"
+  inputs-digest = "d83d482a9c2727d3491ddd818ba882e96eed2e5bb8cf788a86c0304ea7eec646"
   solver-name = "gps-cdcl"
   solver-version = 1

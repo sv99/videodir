@@ -5,7 +5,6 @@ import (
 	"os"
 	"time"
 	"path/filepath"
-	"io/ioutil"
 	"crypto/rsa"
 
 	"golang.org/x/crypto/bcrypt"
@@ -14,7 +13,6 @@ import (
 	// "github.com/foomo/htpasswd"
 	"github.com/sv99/htpasswd"
 
-	"github.com/BurntSushi/toml"
 	"github.com/kataras/iris"
 	"github.com/kataras/iris/middleware/logger"
 	"github.com/kataras/iris/middleware/recover"
@@ -22,7 +20,10 @@ import (
 	jwtmiddleware "github.com/iris-contrib/middleware/jwt"
 )
 
-const VERSION = "0.2"
+const (
+	VERSION = "0.2"
+	HTPASSWD = "htpasswd"
+)
 
 type Config struct {
 	LogLevel   string
@@ -37,7 +38,7 @@ type Config struct {
 }
 
 type Path struct {
-	Path 	[]string `json:"path"`
+	Path []string `json:"path"`
 }
 
 type Token struct {
@@ -86,7 +87,7 @@ func readJsonPath(app *iris.Application, ctx iris.Context) (Path, error) {
 	err := ctx.ReadJSON(&vf)
 	if err != nil {
 		sendJsonError(app, ctx, iris.StatusBadRequest,
-			"filesize ReadJSON error: " + err.Error())
+			"filesize ReadJSON error: "+err.Error())
 		return vf, err
 	}
 
@@ -103,8 +104,8 @@ func main() {
 
 	app := iris.New()
 	app.Configure(iris.WithConfiguration(iris.Configuration{
-		DisableStartupLog:                 false,
-		Charset:                           "UTF-8",
+		DisableStartupLog: false,
+		Charset:           "UTF-8",
 	}))
 
 	app.Logger().SetLevel("debug")
@@ -128,44 +129,7 @@ func main() {
 		Cert:       "server.crt",
 		Key:        "server.key",
 	}
-	if _, err := toml.DecodeFile("./videodir.conf", &conf); err != nil {
-		app.Logger().Warn("Config problems: " + err.Error())
-	}
-	// set LogLevel from config
-	app.Logger().SetLevel(conf.LogLevel)
-
-	// read private key
-	app.Logger().Debug("key: ", conf.Key)
-	signBytes, err := ioutil.ReadFile(conf.Key)
-	if err != nil {
-		app.Logger().Fatal("read key file error: ", err.Error())
-		return
-	}
-	conf.signKey, err = jwt.ParseRSAPrivateKeyFromPEM(signBytes)
-	if err != nil {
-		app.Logger().Fatal("init private key error: ", err.Error())
-		return
-	}
-
-	// read public key from certificate
-	app.Logger().Debug("cert: ", conf.Cert)
-	certBytes, err := ioutil.ReadFile(conf.Cert)
-	if err != nil {
-		app.Logger().Fatal("read certificate file error: ", err.Error())
-		return
-	}
-	conf.verifyKey, err = jwt.ParseRSAPublicKeyFromPEM(certBytes)
-	if err != nil {
-		app.Logger().Fatal("init public key from certificate error: ", err.Error())
-		return
-	}
-
-	// read .htpasswd
-	conf.passwords, err = htpasswd.ParseHtpasswdFile("htpasswd")
-	if err != nil {
-		app.Logger().Fatal("read htpasswd error: ", err.Error())
-		return
-	}
+	conf.Init(app)
 
 	app.Favicon("./favicon.ico")
 
@@ -179,14 +143,14 @@ func main() {
 		err := ctx.ReadJSON(&user)
 		if err != nil {
 			sendJsonError(app, ctx, iris.StatusBadRequest,
-				"user credentials read error: " + err.Error())
+				"user credentials read error: "+err.Error())
 			return
 		}
 
 		// validate username and password
 		if !validate(&user, &conf) {
 			sendJsonError(app, ctx, iris.StatusUnauthorized,
-				"user credentials read error: " + err.Error())
+				"invalid user")
 			return
 		}
 
@@ -200,16 +164,14 @@ func main() {
 		tokenString, err := token.SignedString(conf.signKey)
 		if err != nil {
 			sendJsonError(app, ctx, iris.StatusInternalServerError,
-				"Error while signing the token: " + err.Error())
+				"Error while signing the token: "+err.Error())
 			return
 		}
 
 		ctx.JSON(Token{tokenString})
 	})
 
-	//app.StaticWeb("/video1", *videoDir1)
-
-	// v1 authenticated
+	// api v1 authentication handler
 	jwtHandler := jwtmiddleware.New(jwtmiddleware.Config{
 		ValidationKeyGetter: func(token *jwt.Token) (interface{}, error) {
 			return conf.verifyKey, nil
@@ -220,109 +182,14 @@ func main() {
 
 	// need JWT auth header
 	v1 := app.Party("/api/v1", jwtHandler.Serve)
-	{
-		v1.Get("/version", func(ctx iris.Context) {
-			ver := iris.Map{"version": VERSION}
-			ctx.JSON(ver)
-			ver = nil
-		})
 
-		v1.Get("/volumes", func(ctx iris.Context) {
-			ctx.JSON(conf.VideoDirs)
-		})
+	InitApi(app, v1, &conf)
 
-		v1.Post("/list", func(ctx iris.Context) {
-			var vf Path
-			err := ctx.ReadJSON(&vf)
-			if err != nil {
-				sendJsonError(app, ctx, iris.StatusBadRequest,
-					"file get ReadJSON error: " + err.Error())
-				return
-			}
+	cliApp := InitCli(app, &conf)
+	cliApp.WithAction(func(args []string, options map[string]string) int {
+		app.Run(iris.TLS(conf.ServerAddr, conf.Cert, conf.Key))
+		return 0
+	})
 
-			list := make([]string, 0, 10)
-
-			for _, volume := range conf.VideoDirs {
-				vd, err := filepath.Abs(filepath.Join(volume, filepath.Join(vf.Path...)))
-				if err != nil {
-					sendJsonError(app, ctx, iris.StatusInternalServerError,
-						"Get full path error: " + err.Error())
-					return
-				}
-
-				// this path not exists in current volume
-				if _, err := os.Stat(vd); os.IsNotExist(err) {
-					continue
-				}
-
-				files, err := ioutil.ReadDir(vd)
-				if err != nil {
-					sendJsonError(app, ctx, iris.StatusInternalServerError,
-						"Read dir error: " + err.Error())
-					return
-				}
-
-				for _, f := range files {
-					list = append(list, f.Name())
-				}
-			}
-
-			ctx.JSON(list)
-		})
-
-		v1.Post("/file", func(ctx iris.Context) {
-			vf, err := readJsonPath(app, ctx)
-			if err != nil {
-				return
-			}
-
-			var fp = ""
-			for _, volume := range conf.VideoDirs {
-
-				fp, err = filepath.Abs(filepath.Join(volume, filepath.Join(vf.Path...)))
-				if err != nil {
-					sendJsonError(app, ctx, iris.StatusBadRequest,
-						"Video file get full path error: " + err.Error())
-					return
-				}
-
-				if _, err := os.Stat(fp); os.IsNotExist(err) {
-					continue
-				}
-				break
-			}
-			ctx.SendFile(fp, filepath.Base(fp))
-			app.Logger().Info("Send file: ", fp)
-		})
-
-		v1.Post("/filesize", func(ctx iris.Context) {
-			vf, err := readJsonPath(app, ctx)
-			if err != nil {
-				return
-			}
-
-			var fp = ""
-			var size int64 = 0
-			for _, volume := range conf.VideoDirs {
-
-				fp, err = filepath.Abs(filepath.Join(volume, filepath.Join(vf.Path...)))
-				if err != nil {
-					sendJsonError(app, ctx, iris.StatusBadRequest,
-						"Video file get full path error: " + err.Error())
-					return
-				}
-
-				stat, err := os.Stat(fp)
-				if os.IsNotExist(err) {
-					continue
-				}
-				size = stat.Size()
-				break
-			}
-			ctx.JSON(iris.Map{"size": size})
-			app.Logger().Info("Get file size: ", fp)
-		})
-	}
-
-	app.Run(iris.TLS(conf.ServerAddr, conf.Cert, conf.Key))
+	os.Exit(cliApp.Run(os.Args, os.Stdout))
 }
