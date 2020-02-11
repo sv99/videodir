@@ -1,10 +1,11 @@
 package main
 
 import (
-	"github.com/kataras/iris"
-	"path/filepath"
-	"os"
 	"io/ioutil"
+	"os"
+	"path/filepath"
+
+	"github.com/kataras/iris/v12"
 )
 
 func InitApi(app *iris.Application, v1 iris.Party, conf *Config) {
@@ -106,5 +107,36 @@ func InitApi(app *iris.Application, v1 iris.Party, conf *Config) {
 		}
 		ctx.JSON(iris.Map{"size": size})
 		app.Logger().Info("Get file size: ", fp)
+	})
+
+	v1.Post("/remove", func(ctx iris.Context) {
+		vf, err := readJsonPath(app, ctx)
+		if err != nil {
+			return
+		}
+
+		var fp = ""
+		var res = "Ok"
+		for _, volume := range conf.VideoDirs {
+
+			fp, err = filepath.Abs(filepath.Join(volume, filepath.Join(vf.Path...)))
+			if err != nil {
+				sendJsonError(app, ctx, iris.StatusBadRequest,
+					"Video file get full path error: " + err.Error())
+				return
+			}
+
+			if _, err := os.Stat(fp); os.IsNotExist(err) {
+				continue
+			}
+
+			err = os.RemoveAll(fp)
+			if err != nil {
+				res = err.Error()
+			}
+			break
+		}
+		ctx.JSON(iris.Map{"result": res})
+		app.Logger().Infof("Remove path: %s result: %s", fp, res)
 	})
 }

@@ -2,9 +2,9 @@ package main
 
 import (
 	"fmt"
-	"github.com/kataras/iris"
+	"github.com/foomo/htpasswd"
+	"github.com/kataras/iris/v12"
 	"github.com/teris-io/cli"
-	"github.com/sv99/htpasswd"
 )
 
 func InitCli(app *iris.Application, conf *Config) cli.App {

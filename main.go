@@ -3,39 +3,22 @@ package main
 import (
 	"errors"
 	"os"
-	"time"
 	"path/filepath"
-	"crypto/rsa"
+	"time"
 
 	"golang.org/x/crypto/bcrypt"
 
-	// fork for windows compilation
-	// "github.com/foomo/htpasswd"
-	"github.com/sv99/htpasswd"
-
-	"github.com/kataras/iris"
-	"github.com/kataras/iris/middleware/logger"
-	"github.com/kataras/iris/middleware/recover"
 	"github.com/dgrijalva/jwt-go"
 	jwtmiddleware "github.com/iris-contrib/middleware/jwt"
+	"github.com/kataras/iris/v12"
+	"github.com/kataras/iris/v12/middleware/logger"
+	"github.com/kataras/iris/v12/middleware/recover"
 )
 
 const (
-	VERSION = "0.2"
+	VERSION = "0.3"
 	HTPASSWD = "htpasswd"
 )
-
-type Config struct {
-	LogLevel   string
-	ServerAddr string
-	Cert       string
-	Key        string
-	VideoDirs  []string
-
-	verifyKey *rsa.PublicKey
-	signKey   *rsa.PrivateKey
-	passwords htpasswd.HashedPasswords
-}
 
 type Path struct {
 	Path []string `json:"path"`
@@ -100,13 +83,12 @@ func readJsonPath(app *iris.Application, ctx iris.Context) (Path, error) {
 	return vf, nil
 }
 
-func main() {
-
+func newApp(conf *Config) *iris.Application {
 	app := iris.New()
-	app.Configure(iris.WithConfiguration(iris.Configuration{
-		DisableStartupLog: false,
-		Charset:           "UTF-8",
-	}))
+
+	// iris config from yml
+	irisConf := iris.YAML("./iris.yml")
+	app.Configure(iris.WithConfiguration(irisConf))
 
 	app.Logger().SetLevel("debug")
 	app.Logger().AddOutput(newLogFile())
@@ -114,21 +96,7 @@ func main() {
 	app.Use(recover.New())
 	app.Use(logger.New())
 
-	//get path name for the executable
-	//ex, err := os.Executable()
-	//if err != nil {
-	//	app.Logger().Warn(err)
-	//	panic(err)
-	//}
-	//exPath := path.Dir(ex)
-
-	//read configuration
-	conf := Config{
-		LogLevel:   "info",
-		ServerAddr: ":8443",
-		Cert:       "server.crt",
-		Key:        "server.key",
-	}
+	//init app with configuration
 	conf.Init(app)
 
 	app.Favicon("./favicon.ico")
@@ -148,7 +116,7 @@ func main() {
 		}
 
 		// validate username and password
-		if !validate(&user, &conf) {
+		if !validate(&user, conf) {
 			sendJsonError(app, ctx, iris.StatusUnauthorized,
 				"invalid user")
 			return
@@ -183,7 +151,15 @@ func main() {
 	// need JWT auth header
 	v1 := app.Party("/api/v1", jwtHandler.Serve)
 
-	InitApi(app, v1, &conf)
+	InitApi(app, v1, conf)
+
+	return app
+}
+
+func main() {
+	conf := DefaultConfig()
+	conf.TOML("./videodir.conf")
+	app := newApp(&conf)
 
 	cliApp := InitCli(app, &conf)
 	cliApp.WithAction(func(args []string, options map[string]string) int {

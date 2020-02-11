@@ -86,32 +86,32 @@ videodir
 Предположительно, при перекрытии года файлы попадут в ту же папку.
 В имени файла присутствует полный год - конфликта имен не будет.
 
-dependencies using dep
+dependencies using mod
 ----------------------
 
-Не хранит историю git - только актуалные файлы. В результате получаем очень
-компактный размер папки vendor. На текущий момент меньше 8Мб.
+Встроенная система контроля моделей.
 
 ```bash
-brew install dep
-dep init
-# -v show extended log
-dep ensure -v
+go mod init github.com/sv99/videodir
+# init vendor directory 
+go mod vendor
+# build with vendor
+go build -mod=vendor
 ```
 
 Using:
  
-[iris](https://iris-go.com) WEB framework for REST
+[github.com/kataras/iris](https://iris-go.com) WEB framework for REST
  
-[JWT auth](https://github.com/dgrijalva/jwt-go) + [JWT middleware for iris](github.com/iris-contrib/middleware/jwt) 
+[JWT auth github.com/iris-contrib/middleware/jwt](https://github.com/dgrijalva/jwt-go) + [JWT middleware for iris](github.com/iris-contrib/middleware/jwt) 
 
-[TOML](https://github.com/BurntSushi/toml) for config
+[TOML github.com/BurntSushi/toml](https://github.com/BurntSushi/toml) for config
 
-[htpasswd](https://github.com/foomo/htpasswd) Пришлось сделать форк - оригинальный
+[htpasswd github.com/foomo/htpasswd](https://github.com/foomo/htpasswd) Пришлось сделать форк - оригинальный
 пакет не компилируется под 386 битную систему - ошибка переполнения int.
 В авторском репозитарии уже 2 года висит patch request.
 
-[CLI](https://github.com/teris-io/cli) for parsing command line
+[CLI github.com/teris-io/cli](https://github.com/teris-io/cli) for parsing command line
 
 cross compilation
 -----------------
@@ -120,6 +120,7 @@ cross compilation
 
     # compiling with additional environment variable
     GOOS=windows GOARCH=386 go build -o videodir.exe
+    GOOS=windows GOARCH=amd64 go build -o videodir.exe
 
 Настроил дополнительную конфигурацию для генерации videodir.exe.
 
@@ -128,6 +129,7 @@ config
 
 videodir.conf - TOML format
 
+    LogLevel = "info"
     # ServerAddr = ":8443"
     
     # HTTPS data``
@@ -141,6 +143,8 @@ videodir.conf - TOML format
 Также двойной слэш возвращается и в результатах запросов с windows
 сервера.
 
+**iris.yml** iris config file
+
 Handlers
 --------
 
@@ -150,8 +154,9 @@ Handlers               | Query Type | Result
 /login                 | POST       | post {"username: "some", "password": "pass"} return {"token": "JWT TOKEN"}
 /api/v1/version        | GET        | return {"version": "0.1"}
 /api/v1/volumes        | GET        | get array volumes with video dirs
-/api/v1/list           | POST       | post { "path": [ "/24-01-18 01/" ] } get directory list scan all volumes, path may be empty for root directory
-/api/v1/file           | POST       | post { "path": [ "/24-01-18 01/", "0._02" ] } get file scan all volumes and return file stream, path not may be empty
+/api/v1/list           | POST       | post { "path": [ "/24-01-18 01/" ] } get directory list, scan all volumes, path may be empty for root directory
+/api/v1/file           | POST       | post { "path": [ "/24-01-18 01/", "0._02" ] } get file, scan all volumes and return file stream, path not may be empty
+/api/v1/remove         | POST       | post { "path": [ "/24-01-18 01/", "0._02" ] } remove path (directory o single file) return {"result": "OK"} or return {"result": "Error"}
 
 path передаем как массив элементов пути, в противном случае, когда 
 передаем путь из windows система видит ескейп последовательности
@@ -186,7 +191,7 @@ Use HTTPS и JWT token
     # add or update bcrypt hash
     htpasswd -bB htpasswd dima dima
 
-CLI для работы с htpasswd
+CLI для работы с htpasswd. Для работы достаточно htpasswd нулевого размера. 
 
 ```bash
 >videodir -h
@@ -247,13 +252,7 @@ NSSM позволяет перенаправить stdout и stderr в файл,
 todo
 ----
 
-1.  Возможно использование дополнительных параметров командной строки для
-работы с паролями в htpasswd  
-
-2. Test
-
-3. Тестирование на предмет утечек памяти в реальных условиях
-Проблема не подтверждена. Вызов сборщика мусора не мгновенный но
-предсказуемый. Нужно отследить долговременное выделение памяти.
-
-4. Распределение проекта по отдлельным файлам.
+1. Выявлена проблема связанная со сканированием портов и попытками взлома.
+Сервер упал и не поднялся самостоятельно, хотя вроде бы должен был.
+Проблему решил радикально фильтрацией по IP на Mikrotik но осадочек остался.
+Повторно не подключал.

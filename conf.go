@@ -1,17 +1,43 @@
 package main
 
 import (
-	"io/ioutil"
-	"github.com/kataras/iris"
-	"github.com/sv99/htpasswd"
+	"crypto/rsa"
+	"fmt"
 	"github.com/BurntSushi/toml"
 	"github.com/dgrijalva/jwt-go"
+	"github.com/foomo/htpasswd"
+	"github.com/kataras/iris/v12"
+	"io/ioutil"
 )
 
-func (conf *Config) Init(app *iris.Application)  {
-	if _, err := toml.DecodeFile("./videodir.conf", &conf); err != nil {
-		app.Logger().Warn("Config problems: " + err.Error())
+type Config struct {
+	LogLevel   string
+	ServerAddr string
+	Cert       string
+	Key        string
+	VideoDirs  []string
+
+	verifyKey *rsa.PublicKey
+	signKey   *rsa.PrivateKey
+	passwords htpasswd.HashedPasswords
+}
+
+func DefaultConfig() Config {
+	return Config{
+		LogLevel:   "info",
+		ServerAddr: ":8443",
+		Cert:       "server.crt",
+		Key:        "server.key",
 	}
+}
+
+func (conf *Config) TOML(fpath string) {
+	if _, err := toml.DecodeFile(fpath, &conf); err != nil {
+		panic(fmt.Sprintf("Config problems: %s", err.Error()))
+	}
+}
+
+func (conf *Config) Init(app *iris.Application)  {
 	// set LogLevel from config
 	app.Logger().SetLevel(conf.LogLevel)
 

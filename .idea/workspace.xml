@@ -1,15 +1,46 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="BranchesTreeState">
+    <expand>
+      <path>
+        <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="LOCAL_ROOT" type="e8cecc67:BranchNodeDescriptor" />
+      </path>
+      <path>
+        <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="REMOTE_ROOT" type="e8cecc67:BranchNodeDescriptor" />
+      </path>
+      <path>
+        <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="REMOTE_ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="GROUP_NODE:gogsvr" type="e8cecc67:BranchNodeDescriptor" />
+      </path>
+      <path>
+        <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="REMOTE_ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="GROUP_NODE:origin" type="e8cecc67:BranchNodeDescriptor" />
+      </path>
+    </expand>
+    <select />
+  </component>
   <component name="ChangeListManager">
     <list default="true" id="877d7424-239b-4929-94a2-7e95b2619939" name="Default" comment="">
+      <change afterPath="$PROJECT_DIR$/iris.yml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Gopkg.lock" beforeDir="false" afterPath="$PROJECT_DIR$/Gopkg.lock" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/htpasswd" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/GOPATH__videodir_.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Go_SDK.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/videodir.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/videodir.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Gopkg.lock" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Gopkg.toml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/api.go" beforeDir="false" afterPath="$PROJECT_DIR$/api.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cli.go" beforeDir="false" afterPath="$PROJECT_DIR$/cli.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/conf.go" beforeDir="false" afterPath="$PROJECT_DIR$/conf.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/main.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main_test.go" beforeDir="false" afterPath="$PROJECT_DIR$/main_test.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/readme.md" beforeDir="false" afterPath="$PROJECT_DIR$/readme.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/videodir.conf" beforeDir="false" afterPath="$PROJECT_DIR$/videodir.conf" afterDir="false" />
     </list>
-    <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
-    <option name="TRACKING_ENABLED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -17,106 +48,6 @@
   </component>
   <component name="CreatePatchCommitExecutor">
     <option name="PATCH_PATH" value="" />
-  </component>
-  <component name="FileEditorManager">
-    <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="main.go" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/main.go">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="239">
-              <caret line="19" column="57" lean-forward="true" selection-start-line="19" selection-start-column="19" selection-end-line="19" selection-end-column="57" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name=".gitignore" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/.gitignore">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="165">
-              <caret line="11" column="23" lean-forward="true" selection-start-line="11" selection-start-column="23" selection-end-line="11" selection-end-column="23" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="cli.go" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/cli.go">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="75">
-              <caret line="5" column="5" selection-start-line="5" selection-start-column="5" selection-end-line="5" selection-end-column="28" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="readme.md" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/readme.md">
-          <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
-            <state split_layout="SPLIT">
-              <first_editor relative-caret-position="-821">
-                <caret line="115" selection-start-line="115" selection-end-line="115" />
-              </first_editor>
-              <second_editor />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="command.go" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/vendor/github.com/teris-io/cli/command.go">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="413">
-              <caret line="39" column="5" selection-start-line="39" selection-start-column="5" selection-end-line="39" selection-end-column="5" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="app.go" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/vendor/github.com/teris-io/cli/app.go">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="670">
-              <caret line="60" column="26" selection-start-line="60" selection-start-column="23" selection-end-line="60" selection-end-column="26" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="flag.go" pinned="false" current-in-tab="false">
-        <entry file="file:///usr/local/Cellar/go/1.10/libexec/src/flag/flag.go">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="406">
-              <caret line="544" column="13" selection-start-line="544" selection-start-column="13" selection-end-line="544" selection-end-column="13" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="conf.go" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/conf.go">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="90">
-              <caret line="6" column="5" lean-forward="true" selection-start-line="6" selection-start-column="5" selection-end-line="6" selection-end-column="31" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="htpasswd.go" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/vendor/github.com/sv99/htpasswd/htpasswd.go">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="270">
-              <caret line="24" selection-start-line="24" selection-end-line="24" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="api.go" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/api.go">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="555">
-              <caret line="37" column="53" selection-start-line="37" selection-start-column="53" selection-end-line="37" selection-end-column="53" />
-              <folding>
-                <element signature="e#14#87#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-    </leaf>
   </component>
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
@@ -126,113 +57,62 @@
       </list>
     </option>
   </component>
-  <component name="FindInProjectRecents">
-    <findStrings>
-      <find>JSON</find>
-      <find>json</find>
-    </findStrings>
-  </component>
-  <component name="GOROOT" path="/usr/local/Cellar/go/1.10/libexec" />
+  <component name="GOROOT" path="/usr/local/opt/go/libexec" />
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
-  <component name="IdeDocumentHistory">
-    <option name="CHANGED_PATHS">
-      <list>
-        <option value="$PROJECT_DIR$/README.MD" />
-        <option value="$PROJECT_DIR$/main_test.go" />
-        <option value="$PROJECT_DIR$/Gopkg.toml" />
-        <option value="$PROJECT_DIR$/index.html" />
-        <option value="$PROJECT_DIR$/todo.md" />
-        <option value="$PROJECT_DIR$/videodir1.conf" />
-        <option value="$PROJECT_DIR$/.htpasswd" />
-        <option value="$PROJECT_DIR$/videodir.conf" />
-        <option value="$PROJECT_DIR$/vendor/github.com/foomo/htpasswd/htpasswd.go" />
-        <option value="$PROJECT_DIR$/handlers.go" />
-        <option value="$PROJECT_DIR$/api.go" />
-        <option value="$PROJECT_DIR$/cong.go" />
-        <option value="$PROJECT_DIR$/main.go" />
-        <option value="$PROJECT_DIR$/conf.go" />
-        <option value="$PROJECT_DIR$/cli.go" />
-        <option value="$PROJECT_DIR$/readme.md" />
-        <option value="$PROJECT_DIR$/.gitignore" />
-      </list>
-    </option>
+  <component name="GoDepProject">
+    <integration-enabled>true</integration-enabled>
+    <exec-path>$PROJECT_DIR$/../../bin/dep</exec-path>
   </component>
-  <component name="JsBuildToolGruntFileManager" detection-done="true" sorting="DEFINITION_ORDER" />
-  <component name="JsBuildToolPackageJson" detection-done="true" sorting="DEFINITION_ORDER" />
-  <component name="JsGulpfileManager">
-    <detection-done>true</detection-done>
-    <sorting>DEFINITION_ORDER</sorting>
-  </component>
-  <component name="ProjectFrameBounds">
-    <option name="x" value="1440" />
-    <option name="y" value="-157" />
-    <option name="width" value="1260" />
-    <option name="height" value="859" />
-  </component>
+  <component name="ProjectId" id="1MpkESLSqjyyYG4AcFrBqwwhrZS" />
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
-  <component name="ProjectView">
-    <navigator proportions="" version="1">
-      <foldersAlwaysOnTop value="true" />
-    </navigator>
-    <panes>
-      <pane id="ProjectPane">
-        <subPane>
-          <expand>
-            <path>
-              <item name="videodir" type="b2602c69:ProjectViewProjectNode" />
-              <item name="videodir" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="videodir" type="b2602c69:ProjectViewProjectNode" />
-              <item name="videodir" type="462c0819:PsiDirectoryNode" />
-              <item name="video1" type="462c0819:PsiDirectoryNode" />
-            </path>
-          </expand>
-          <select />
-        </subPane>
-      </pane>
-      <pane id="Scope" />
-    </panes>
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
   </component>
   <component name="PropertiesComponent">
+    <property name="ASKED_ADD_EXTERNAL_FILES" value="true" />
     <property name="DefaultGoTemplateProperty" value="Go File" />
     <property name="DefaultHtmlFileTemplate" value="HTML File" />
+    <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="configurable.Global.GOPATH.is.expanded" value="true" />
     <property name="configurable.Module.GOPATH.is.expanded" value="true" />
     <property name="configurable.Project.GOPATH.is.expanded" value="true" />
+    <property name="go.gopath.indexing.explicitly.defined" value="true" />
+    <property name="go.import.settings.migrated" value="true" />
     <property name="go.sdk.automatically.set" value="true" />
     <property name="go.vendoring.notification.had.been.shown" value="true" />
     <property name="js-jscs-nodeInterpreter" value="$USER_HOME$/.nvm/versions/node/v6.3.1/bin/node" />
     <property name="js.eslint.eslintPackage" value="" />
-    <property name="last_opened_file_path" value="$USER_HOME$" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="node.js.detected.package.eslint" value="true" />
+    <property name="node.js.detected.package.tslint" value="true" />
+    <property name="node.js.path.for.package.eslint" value="project" />
+    <property name="node.js.path.for.package.tslint" value="project" />
+    <property name="node.js.selected.package.eslint" value="(autodetect)" />
+    <property name="node.js.selected.package.tslint" value="(autodetect)" />
     <property name="nodejs_interpreter_path" value="node" />
-    <property name="settings.editor.selected.configurable" value="go.sdk" />
+    <property name="settings.editor.selected.configurable" value="go.vgo" />
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$" />
     </key>
   </component>
-  <component name="RunDashboard">
-    <option name="ruleStates">
-      <list>
-        <RuleState>
-          <option name="name" value="ConfigurationTypeDashboardGroupingRule" />
-        </RuleState>
-        <RuleState>
-          <option name="name" value="StatusDashboardGroupingRule" />
-        </RuleState>
-      </list>
-    </option>
-  </component>
-  <component name="RunManager" selected="Go Build.videodir">
+  <component name="RunManager" selected="Go Test.go test videodir">
+    <configuration default="true" type="GoRunFileConfiguration" factoryName="Go Single File">
+      <module name="videodir" />
+      <working_directory value="$PROJECT_DIR$/" />
+      <filePath value="$PROJECT_DIR$/" />
+      <method />
+    </configuration>
     <configuration default="true" type="GoApplicationRunConfiguration" factoryName="Go Application">
       <module name="videodir" />
       <working_directory value="$PROJECT_DIR$/" />
       <kind value="FILE" />
       <filePath value="$PROJECT_DIR$/" />
+      <method v="2" />
     </configuration>
     <configuration name="videodir for windows" type="GoApplicationRunConfiguration" factoryName="Go Application">
       <output_file path="$PROJECT_DIR$/" />
@@ -245,374 +125,147 @@
       </envs>
       <kind value="PACKAGE" />
       <filePath value="$PROJECT_DIR$/" />
-      <package value="videodir" />
+      <package value="github.com/sv99/videodir" />
       <output_directory value="$PROJECT_DIR$" />
       <option name="run" value="false" />
+      <method v="2" />
     </configuration>
     <configuration name="videodir" type="GoApplicationRunConfiguration" factoryName="Go Application">
       <output_file path="$PROJECT_DIR$/" />
       <module name="videodir" />
-      <working_directory value="$PROJECT_DIR$/" />
+      <working_directory value="$PROJECT_DIR$" />
       <kind value="PACKAGE" />
-      <filePath value="$PROJECT_DIR$/" />
-      <package value="videodir" />
+      <filePath value="$PROJECT_DIR$/|$PROJECT_DIR$/main.go" />
+      <package value="github.com/sv99/videodir" />
+      <directory value="$PROJECT_DIR$" />
       <output_directory value="$PROJECT_DIR$" />
+      <method v="2" />
     </configuration>
     <configuration default="true" type="GoTestRunConfiguration" factoryName="Go Test">
       <module name="videodir" />
       <working_directory value="$PROJECT_DIR$/" />
       <framework value="gotest" />
       <kind value="DIRECTORY" />
+      <method v="2" />
     </configuration>
-    <configuration default="true" type="GoRunFileConfiguration" factoryName="Go Single File">
+    <configuration name="go test videodir" type="GoTestRunConfiguration" factoryName="Go Test">
       <module name="videodir" />
       <working_directory value="$PROJECT_DIR$/" />
-      <filePath value="$PROJECT_DIR$/" />
-      <method />
+      <framework value="gotest" />
+      <kind value="PACKAGE" />
+      <package value="github.com/sv99/videodir" />
+      <directory value="$PROJECT_DIR$" />
+      <output_directory value="$PROJECT_DIR$" />
+      <method v="2" />
     </configuration>
-    <configuration default="true" type="JavaScriptTestRunnerProtractor" factoryName="Protractor">
-      <config-file value="" />
-      <node-interpreter value="project" />
-      <envs />
-      <method />
-    </configuration>
-    <configuration default="true" type="JavascriptDebugType" factoryName="JavaScript Debug">
-      <method />
-    </configuration>
-    <configuration default="true" type="js.build_tools.npm" factoryName="npm">
-      <command value="run" />
-      <scripts />
-      <node-interpreter value="project" />
-      <envs />
-      <method />
-    </configuration>
-    <configuration default="true" type="js.build_tools.gulp" factoryName="Gulp.js">
+    <configuration default="true" type="js.build_tools.gulp">
       <node-interpreter>project</node-interpreter>
       <node-options />
       <gulpfile />
       <tasks />
       <arguments />
       <envs />
+      <method v="2" />
     </configuration>
     <list>
       <item itemvalue="Go Build.videodir" />
       <item itemvalue="Go Build.videodir for windows" />
+      <item itemvalue="Go Test.go test videodir" />
     </list>
   </component>
-  <component name="ToolWindowManager">
-    <frame x="1440" y="-157" width="1260" height="859" extended-state="0" />
-    <editor active="true" />
-    <layout>
-      <window_info content_ui="combo" id="Project" order="0" sideWeight="0.48812094" visible="true" weight="0.27422002" />
-      <window_info anchor="bottom" id="TODO" order="6" />
-      <window_info anchor="bottom" id="Event Log" order="7" sideWeight="0.50164205" side_tool="true" weight="0.39397904" />
-      <window_info anchor="right" id="Database" order="3" />
-      <window_info anchor="bottom" id="Run" order="2" sideWeight="0.49835795" weight="0.32853404" />
-      <window_info anchor="bottom" id="Version Control" order="7" weight="0.32866043" />
-      <window_info id="Structure" order="1" sideWeight="0.511879" side_tool="true" visible="true" weight="0.27422002" />
-      <window_info anchor="bottom" id="Terminal" order="7" sideWeight="0.49917898" weight="0.32591623" />
-      <window_info active="true" anchor="bottom" id="Debug" order="3" sideWeight="0.49835795" visible="true" weight="0.39397904" />
-      <window_info id="Favorites" order="2" side_tool="true" />
-      <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
-      <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
-      <window_info anchor="right" id="Commander" order="0" weight="0.4" />
-      <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
-      <window_info anchor="bottom" id="Message" order="0" />
-      <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
-      <window_info anchor="bottom" id="Find" order="1" weight="0.32866043" />
-    </layout>
-  </component>
   <component name="TypeScriptGeneratedFilesManager">
-    <option name="version" value="1" />
+    <option name="version" value="2" />
   </component>
   <component name="UnknownFeatures">
+    <option featureType="com.intellij.fileTypeFactory" implementationName="*.toml" />
     <option featureType="com.intellij.fileTypeFactory" implementationName="*.conf" />
   </component>
-  <component name="VcsContentAnnotationSettings">
-    <option name="myLimit" value="2678400000" />
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="BRANCHES_LOG">
+          <value>
+            <State />
+          </value>
+        </entry>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
   </component>
-  <component name="XDebuggerManager">
-    <breakpoint-manager>
-      <option name="time" value="21" />
-    </breakpoint-manager>
+  <component name="VgoProject">
+    <integration-enabled>true</integration-enabled>
+    <vendoring-mode>true</vendoring-mode>
   </component>
-  <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/videodir2.conf" />
-    <entry file="file://$PROJECT_DIR$/readme.md">
-      <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
-        <state split_layout="SPLIT">
-          <first_editor />
-          <second_editor />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/main.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="195">
-          <caret line="24" column="1" selection-start-line="24" selection-start-column="1" selection-end-line="24" selection-end-column="1" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/videodir2.conf" />
-    <entry file="file://$PROJECT_DIR$/readme.md">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="180">
-          <caret line="12" lean-forward="true" selection-start-line="12" selection-end-line="12" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/videodir2.conf" />
-    <entry file="file://$PROJECT_DIR$/readme.md">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="75">
-          <caret line="5" column="1" selection-start-line="5" selection-start-column="1" selection-end-line="5" selection-end-column="36" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/main_test.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state>
-          <caret column="12" selection-start-column="12" selection-end-column="12" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file:///usr/local/Cellar/go/1.9.4/libexec/src/crypto/tls/common.go" />
-    <entry file="file://$PROJECT_DIR$/index.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="180">
-          <caret line="12" column="5" selection-start-line="12" selection-start-column="5" selection-end-line="12" selection-end-column="5" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file:///usr/local/Cellar/go/1.9.4/libexec/src/net/tcpsock.go" />
-    <entry file="file://$PROJECT_DIR$/vendor/github.com/kataras/iris/core/host/supervisor.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="250">
-          <caret line="265" column="66" selection-start-line="265" selection-start-column="66" selection-end-line="265" selection-end-column="66" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/todo.md" />
-    <entry file="file:///usr/local/Cellar/go/1.9.4/libexec/src/net/http/server.go" />
-    <entry file="file://$PROJECT_DIR$/Gopkg.lock">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1785">
-          <caret line="119" column="3" lean-forward="true" selection-start-line="119" selection-start-column="3" selection-end-line="119" selection-end-column="3" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/videodir2.conf" />
-    <entry file="file://$PROJECT_DIR$/vendor/github.com/kataras/iris/core/router/party.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-727">
-          <caret line="103" column="4" selection-start-line="103" selection-start-column="4" selection-end-line="103" selection-end-column="4" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/vendor/github.com/kataras/iris/core/router/route.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="359">
-          <caret line="88" column="16" selection-start-line="88" selection-start-column="16" selection-end-line="88" selection-end-column="16" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file:///usr/local/Cellar/go/1.9.4/libexec/src/path/filepath/path.go" />
-    <entry file="file://$PROJECT_DIR$/vendor/github.com/dgrijalva/jwt-go/rsa_utils.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="65">
-          <caret line="42" column="5" selection-start-line="42" selection-start-column="5" selection-end-line="42" selection-end-column="5" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/vendor/github.com/dgrijalva/jwt-go/rsa.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="173">
-          <caret line="17" column="4" selection-start-line="17" selection-start-column="4" selection-end-line="17" selection-end-column="4" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/vendor/github.com/iris-contrib/middleware/jwt/config.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="86">
-          <caret line="14" column="4" selection-start-line="14" selection-start-column="4" selection-end-line="14" selection-end-column="4" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/vendor/github.com/dgrijalva/jwt-go/token.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="358">
-          <caret line="87" column="5" selection-start-line="87" selection-start-column="5" selection-end-line="87" selection-end-column="5" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/vendor/github.com/iris-contrib/middleware/jwt/jwt.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="229">
-          <caret line="180" column="31" selection-start-line="180" selection-start-column="31" selection-end-line="180" selection-end-column="31" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file:///usr/local/Cellar/go/1.9.4/libexec/src/os/file.go" />
-    <entry file="file:///usr/local/Cellar/go/1.9.4/libexec/src/runtime/panic.go" />
-    <entry file="file:///usr/local/Cellar/go/1.9.4/libexec/src/runtime/proc.go" />
-    <entry file="file://$PROJECT_DIR$/vendor/github.com/kataras/golog/logger.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="111">
-          <caret line="142" selection-start-line="142" selection-end-line="148" selection-end-column="10" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/vendor/github.com/kataras/iris/configuration.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-136">
-          <caret line="386" column="5" selection-start-line="386" selection-start-column="5" selection-end-line="386" selection-end-column="5" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/.htpasswd" />
-    <entry file="file://$PROJECT_DIR$/vendor/github.com/foomo/htpasswd/htpasswd.go" />
-    <entry file="file:///usr/local/Cellar/go/1.9.4/libexec/src/os/types.go" />
-    <entry file="file:///usr/local/Cellar/go/1.9.4/libexec/src/os/stat_unix.go" />
-    <entry file="file://$PROJECT_DIR$/vendor/github.com/kataras/iris/iris.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="173">
-          <caret line="98" column="4" selection-start-line="98" selection-start-column="4" selection-end-line="98" selection-end-column="4" />
-          <folding>
-            <element signature="e#14#767#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/vendor/github.com/kataras/iris/go19.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="154">
-          <caret line="18" column="4" selection-start-line="18" selection-start-column="4" selection-end-line="18" selection-end-column="4" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/vendor/github.com/BurntSushi/toml/decode.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="274">
-          <caret line="114" column="17" selection-start-line="114" selection-start-column="17" selection-end-line="114" selection-end-column="17" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/vendor/github.com/BurntSushi/toml/parse.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-2260">
-          <caret line="38" column="5" selection-start-line="38" selection-start-column="5" selection-end-line="38" selection-end-column="5" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Gopkg.toml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="420">
-          <caret line="28" column="18" selection-start-line="28" selection-start-column="18" selection-end-line="28" selection-end-column="18" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/videodir.conf">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="105">
-          <caret line="7" column="9" selection-start-line="7" selection-start-column="9" selection-end-line="7" selection-end-column="9" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/vendor/github.com/kataras/iris/core/router/api_builder.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="245">
-          <caret line="234" column="84" selection-start-line="234" selection-start-column="79" selection-end-line="234" selection-end-column="84" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/api.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="555">
-          <caret line="37" column="53" selection-start-line="37" selection-start-column="53" selection-end-line="37" selection-end-column="53" />
-          <folding>
-            <element signature="e#14#87#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file:///usr/local/Cellar/go/1.10/libexec/src/flag/flag.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="406">
-          <caret line="544" column="13" selection-start-line="544" selection-start-column="13" selection-end-line="544" selection-end-column="13" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/vendor/github.com/sv99/htpasswd/htpasswd.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="270">
-          <caret line="24" selection-start-line="24" selection-end-line="24" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/vendor/github.com/teris-io/cli/app.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="670">
-          <caret line="60" column="26" selection-start-line="60" selection-start-column="23" selection-end-line="60" selection-end-column="26" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/vendor/github.com/teris-io/cli/command.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="413">
-          <caret line="39" column="5" selection-start-line="39" selection-start-column="5" selection-end-line="39" selection-end-column="5" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/vendor/github.com/kataras/iris/context/context.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1264">
-          <caret line="1252" column="1" selection-start-line="1252" selection-start-column="1" selection-end-line="1252" selection-end-column="1" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/conf.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="90">
-          <caret line="6" column="5" lean-forward="true" selection-start-line="6" selection-start-column="5" selection-end-line="6" selection-end-column="31" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/main.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="239">
-          <caret line="19" column="57" lean-forward="true" selection-start-line="19" selection-start-column="19" selection-end-line="19" selection-end-column="57" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/cli.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="75">
-          <caret line="5" column="5" selection-start-line="5" selection-start-column="5" selection-end-line="5" selection-end-column="28" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/readme.md">
-      <provider editor-type-id="text-editor">
-        <state relative-caret-position="180">
-          <caret line="12" lean-forward="true" selection-start-line="12" selection-end-line="12" />
-        </state>
-      </provider>
-      <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
-        <state split_layout="SPLIT">
-          <first_editor relative-caret-position="-821">
-            <caret line="115" selection-start-line="115" selection-end-line="115" />
-          </first_editor>
-          <second_editor />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/.gitignore">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="165">
-          <caret line="11" column="23" lean-forward="true" selection-start-line="11" selection-start-column="23" selection-end-line="11" selection-end-column="23" />
-        </state>
-      </provider>
-    </entry>
+  <component name="WindowStateProjectService">
+    <state x="2024" y="55" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1581412976468">
+      <screen x="1440" y="-157" width="1920" height="1057" />
+    </state>
+    <state x="2024" y="55" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.23.1440.877/1440.-157.1920.1057@1440.-157.1920.1057" timestamp="1581412976468" />
+    <state x="369" y="199" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.23.1440.877@0.23.1440.877" timestamp="1581365519470" />
+    <state x="1905" y="135" key="#go_build_videodir" timestamp="1581324356569">
+      <screen x="1440" y="-157" width="1920" height="1057" />
+    </state>
+    <state x="1905" y="135" key="#go_build_videodir/0.23.1440.877/1440.-157.1920.1057@1440.-157.1920.1057" timestamp="1581324356569" />
+    <state x="1905" y="136" key="#videodir" timestamp="1581327303217">
+      <screen x="1440" y="-157" width="1920" height="1057" />
+    </state>
+    <state x="1905" y="136" key="#videodir/0.23.1440.877/1440.-157.1920.1057@1440.-157.1920.1057" timestamp="1581327303217" />
+    <state width="1358" height="215" key="GridCell.Tab.0.bottom" timestamp="1581412981488">
+      <screen x="1440" y="-157" width="1920" height="1057" />
+    </state>
+    <state width="1358" height="215" key="GridCell.Tab.0.bottom/0.23.1440.877/1440.-157.1920.1057@1440.-157.1920.1057" timestamp="1581412981488" />
+    <state width="1358" height="215" key="GridCell.Tab.0.bottom/0.23.1440.877@0.23.1440.877" timestamp="1581366108976" />
+    <state width="1358" height="215" key="GridCell.Tab.0.center" timestamp="1581412981487">
+      <screen x="1440" y="-157" width="1920" height="1057" />
+    </state>
+    <state width="1358" height="215" key="GridCell.Tab.0.center/0.23.1440.877/1440.-157.1920.1057@1440.-157.1920.1057" timestamp="1581412981487" />
+    <state width="1358" height="215" key="GridCell.Tab.0.center/0.23.1440.877@0.23.1440.877" timestamp="1581366108975" />
+    <state width="1358" height="215" key="GridCell.Tab.0.left" timestamp="1581412981485">
+      <screen x="1440" y="-157" width="1920" height="1057" />
+    </state>
+    <state width="1358" height="215" key="GridCell.Tab.0.left/0.23.1440.877/1440.-157.1920.1057@1440.-157.1920.1057" timestamp="1581412981485" />
+    <state width="1358" height="215" key="GridCell.Tab.0.left/0.23.1440.877@0.23.1440.877" timestamp="1581366108975" />
+    <state width="1358" height="215" key="GridCell.Tab.0.right" timestamp="1581412981488">
+      <screen x="1440" y="-157" width="1920" height="1057" />
+    </state>
+    <state width="1358" height="215" key="GridCell.Tab.0.right/0.23.1440.877/1440.-157.1920.1057@1440.-157.1920.1057" timestamp="1581412981488" />
+    <state width="1358" height="215" key="GridCell.Tab.0.right/0.23.1440.877@0.23.1440.877" timestamp="1581366108976" />
+    <state width="1358" height="265" key="GridCell.Tab.1.bottom" timestamp="1581403500706">
+      <screen x="1440" y="-157" width="1920" height="1057" />
+    </state>
+    <state width="1358" height="265" key="GridCell.Tab.1.bottom/0.23.1440.877/1440.-157.1920.1057@1440.-157.1920.1057" timestamp="1581403500706" />
+    <state width="1358" height="265" key="GridCell.Tab.1.bottom/0.23.1440.877@0.23.1440.877" timestamp="1581366001986" />
+    <state width="1358" height="265" key="GridCell.Tab.1.center" timestamp="1581403500705">
+      <screen x="1440" y="-157" width="1920" height="1057" />
+    </state>
+    <state width="1358" height="265" key="GridCell.Tab.1.center/0.23.1440.877/1440.-157.1920.1057@1440.-157.1920.1057" timestamp="1581403500705" />
+    <state width="1358" height="265" key="GridCell.Tab.1.center/0.23.1440.877@0.23.1440.877" timestamp="1581366001985" />
+    <state width="1358" height="265" key="GridCell.Tab.1.left" timestamp="1581403500704">
+      <screen x="1440" y="-157" width="1920" height="1057" />
+    </state>
+    <state width="1358" height="265" key="GridCell.Tab.1.left/0.23.1440.877/1440.-157.1920.1057@1440.-157.1920.1057" timestamp="1581403500704" />
+    <state width="1358" height="265" key="GridCell.Tab.1.left/0.23.1440.877@0.23.1440.877" timestamp="1581366001985" />
+    <state width="1358" height="265" key="GridCell.Tab.1.right" timestamp="1581403500705">
+      <screen x="1440" y="-157" width="1920" height="1057" />
+    </state>
+    <state width="1358" height="265" key="GridCell.Tab.1.right/0.23.1440.877/1440.-157.1920.1057@1440.-157.1920.1057" timestamp="1581403500705" />
+    <state width="1358" height="265" key="GridCell.Tab.1.right/0.23.1440.877@0.23.1440.877" timestamp="1581366001985" />
+    <state x="1803" y="211" key="IDE.errors.dialog" timestamp="1581411560490">
+      <screen x="1440" y="-157" width="1920" height="1057" />
+    </state>
+    <state x="1803" y="211" key="IDE.errors.dialog/0.23.1440.877/1440.-157.1920.1057@1440.-157.1920.1057" timestamp="1581411560490" />
+    <state x="1698" y="115" key="SettingsEditor" timestamp="1581328426308">
+      <screen x="1440" y="-157" width="1920" height="1057" />
+    </state>
+    <state x="1698" y="115" key="SettingsEditor/0.23.1440.877/1440.-157.1920.1057@1440.-157.1920.1057" timestamp="1581328426308" />
+    <state x="1796" y="218" width="664" height="490" key="find.popup" timestamp="1581329509604">
+      <screen x="1440" y="-157" width="1920" height="1057" />
+    </state>
+    <state x="1796" y="218" width="664" height="490" key="find.popup/0.23.1440.877/1440.-157.1920.1057@1440.-157.1920.1057" timestamp="1581329509604" />
   </component>
   <component name="masterDetails">
     <states>

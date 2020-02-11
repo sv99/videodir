@@ -4,13 +4,17 @@ vendor/
 # working build
 videodir
 videodir.exe
+go_test_videodir
 
-# https certificats
+# https certificats and keys
 server.crt
 server.key
 htpasswd
 
 # video samples and log
-video1/
+videoItv/
+videoGeovision/
+videoTest/
+videoTest1/
 log/
 
