@@ -107,9 +107,8 @@ Using:
 
 [TOML github.com/BurntSushi/toml](https://github.com/BurntSushi/toml) for config
 
-[htpasswd github.com/foomo/htpasswd](https://github.com/foomo/htpasswd) Пришлось сделать форк - оригинальный
-пакет не компилируется под 386 битную систему - ошибка переполнения int.
-В авторском репозитарии уже 2 года висит patch request.
+[htpasswd github.com/foomo/htpasswd](https://github.com/foomo/htpasswd) Вернулся к оригинальному
+репозиторию, необходимости в forke больше нет.
 
 [CLI github.com/teris-io/cli](https://github.com/teris-io/cli) for parsing command line
 
@@ -143,7 +142,7 @@ videodir.conf - TOML format
 Также двойной слэш возвращается и в результатах запросов с windows
 сервера.
 
-**iris.yml** iris config file
+**iris.yml** config file for iris framework
 
 Handlers
 --------
