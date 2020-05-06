@@ -100,9 +100,10 @@ cross compilation
 dependencies using dep
 ----------------------
 
-Windows XP supported only on go 1.10 (release 2018/02/16). Go 1.10 not supported modules!!
+Windows XP supported only on go 1.10.8 (release 2018/02/16).
+Go 1.10 not supported modules!!
 
-go mod не поддерживается - компиляция из GOPATH!! при помощи
+Компиляция из GOPATH!! при помощи
 `dep /gocode/src/videodir`
 
 Зафиксирована версия Iris v10.7 23 Aug 2018 и часть библиотек
