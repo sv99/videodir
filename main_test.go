@@ -6,7 +6,7 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/kataras/iris/v12/httptest"
+	"github.com/kataras/iris/httptest"
 )
 
 const videoTest = "./videoTest/"

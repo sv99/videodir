@@ -6,7 +6,7 @@ import (
 	"github.com/BurntSushi/toml"
 	"github.com/dgrijalva/jwt-go"
 	"github.com/foomo/htpasswd"
-	"github.com/kataras/iris/v12"
+	"github.com/kataras/iris"
 	"io/ioutil"
 )
 

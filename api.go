@@ -5,7 +5,7 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/kataras/iris/v12"
+	"github.com/kataras/iris"
 )
 
 func InitApi(app *iris.Application, v1 iris.Party, conf *Config) {

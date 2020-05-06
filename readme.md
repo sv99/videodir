@@ -86,6 +86,31 @@ videodir
 Предположительно, при перекрытии года файлы попадут в ту же папку.
 В имени файла присутствует полный год - конфликта имен не будет.
 
+cross compilation
+-----------------
+
+Целевая система Windows.
+
+    # compiling with additional environment variable
+    GOOS=windows GOARCH=386 go build -o videodir.exe
+    GOOS=windows GOARCH=amd64 go build -o videodir.exe
+
+Настроил дополнительную конфигурацию для генерации videodir.exe.
+
+dependencies using dep
+----------------------
+
+Windows XP supported only on go 1.10 (release 2018/02/16). Go 1.10 not supported modules!!
+
+go mod не поддерживается - компиляция из GOPATH!! при помощи
+`dep /gocode/src/videodir`
+
+Зафиксирована версия Iris v10.7 23 Aug 2018 и часть библиотек
+пришлось прописывать override - для непрямых зависимостей, тоже
+ориентируемся на эту дату.
+
+Большинство перешло на mod!
+
 dependencies using mod
 ----------------------
 
@@ -97,6 +122,8 @@ go mod init github.com/sv99/videodir
 go mod vendor
 # build with vendor
 go build -mod=vendor
+# update packages version
+gp get -u
 ```
 
 Using:
@@ -111,17 +138,6 @@ Using:
 репозиторию, необходимости в forke больше нет.
 
 [CLI github.com/teris-io/cli](https://github.com/teris-io/cli) for parsing command line
-
-cross compilation
------------------
-
-Целевая система Windows.
-
-    # compiling with additional environment variable
-    GOOS=windows GOARCH=386 go build -o videodir.exe
-    GOOS=windows GOARCH=amd64 go build -o videodir.exe
-
-Настроил дополнительную конфигурацию для генерации videodir.exe.
 
 config
 ------

@@ -10,9 +10,9 @@ import (
 
 	"github.com/dgrijalva/jwt-go"
 	jwtmiddleware "github.com/iris-contrib/middleware/jwt"
-	"github.com/kataras/iris/v12"
-	"github.com/kataras/iris/v12/middleware/logger"
-	"github.com/kataras/iris/v12/middleware/recover"
+	"github.com/kataras/iris"
+	"github.com/kataras/iris/middleware/logger"
+	"github.com/kataras/iris/middleware/recover"
 )
 
 const (
@@ -91,7 +91,6 @@ func newApp(conf *Config) *iris.Application {
 	app.Configure(iris.WithConfiguration(irisConf))
 
 	app.Logger().SetLevel("debug")
-	app.Logger().AddOutput(newLogFile())
 
 	app.Use(recover.New())
 	app.Use(logger.New())
@@ -160,6 +159,7 @@ func main() {
 	conf := DefaultConfig()
 	conf.TOML("./videodir.conf")
 	app := newApp(&conf)
+	app.Logger().AddOutput(newLogFile())
 
 	cliApp := InitCli(app, &conf)
 	cliApp.WithAction(func(args []string, options map[string]string) int {

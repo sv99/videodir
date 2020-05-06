@@ -3,7 +3,7 @@ package main
 import (
 	"fmt"
 	"github.com/foomo/htpasswd"
-	"github.com/kataras/iris/v12"
+	"github.com/kataras/iris"
 	"github.com/teris-io/cli"
 )
 
