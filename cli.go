@@ -1,16 +1,15 @@
-package main
+package videodir
 
 import (
 	"fmt"
 	"github.com/foomo/htpasswd"
-	"github.com/kataras/iris"
 	"github.com/teris-io/cli"
 )
 
-func InitCli(app *iris.Application, conf *Config) cli.App {
+func InitCli(app *AppServer) cli.App {
 	list := cli.NewCommand("list", "list users from htpasswd").
 		WithAction(func(args []string, options map[string]string) int {
-		for name, _ := range conf.passwords {
+		for name, _ := range app.passwords {
 			fmt.Println(name)
 		}
 		return 0
@@ -22,8 +21,7 @@ func InitCli(app *iris.Application, conf *Config) cli.App {
 		WithAction(func(args []string, options map[string]string) int {
 		err := htpasswd.SetPassword(HTPASSWD, args[0], args[1], htpasswd.HashBCrypt)
 		if err != nil {
-			app.Logger().Fatal("update htpasswd error: ", err.Error())
-			return 1
+			app.Logger.Fatal("update htpasswd error: ", err.Error())
 		}
 		fmt.Println("User added: ", args[0])
 		return 0
@@ -34,8 +32,7 @@ func InitCli(app *iris.Application, conf *Config) cli.App {
 		WithAction(func(args []string, options map[string]string) int {
 		err := htpasswd.RemoveUser(HTPASSWD, args[0])
 		if err != nil {
-			app.Logger().Fatal("remove user from htpasswd error: ", err.Error())
-			return 1
+			app.Logger.Fatal("remove user from htpasswd error: ", err.Error())
 		}
 		fmt.Println("User removed: ", args[0])
 		return 0
