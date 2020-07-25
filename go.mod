@@ -14,6 +14,7 @@ require (
 	github.com/flosch/pongo2 v0.0.0-20200529170236-5abacdfa4915 // indirect
 	github.com/foomo/htpasswd v0.0.0-20200116085101-e3a90e78da9c
 	github.com/gavv/monotime v0.0.0-20190418164738-30dba4353424 // indirect
+	github.com/go-bindata/go-bindata v3.1.2+incompatible // indirect
 	github.com/gofiber/fiber v1.13.3
 	github.com/gofiber/helmet v0.1.2
 	github.com/gofiber/jwt v0.2.0
@@ -44,6 +45,7 @@ require (
 	github.com/stretchr/testify v1.6.1 // indirect
 	github.com/teris-io/cli v1.0.1
 	github.com/valyala/bytebufferpool v1.0.0
+	github.com/valyala/fasthttp v1.15.1
 	github.com/valyala/fasttemplate v1.2.0
 	github.com/xeipuuv/gojsonschema v1.2.0 // indirect
 	github.com/yalp/jsonpath v0.0.0-20180802001716-5cc68e5049a0 // indirect

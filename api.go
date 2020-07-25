@@ -96,7 +96,6 @@ func (srv *AppServer) PostFile(c *fiber.Ctx) {
 	}
 	srv.Error(c, fiber.StatusBadRequest,
 		"Video file not found")
-
 }
 
 func (srv *AppServer) PostFileSize(c *fiber.Ctx) {

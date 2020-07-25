@@ -2,10 +2,8 @@
 #.swp
 
 .idea/
-# dep generated files
-vendor/
 
-# working build
+# binary - working build
 videodir
 videodir.exe
 go_test_videodir

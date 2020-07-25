@@ -88,10 +88,14 @@ func NewApp(conf *Config) *AppServer {
 
 	// index - login not require
 	app.Get("/", func(ctx *fiber.Ctx) {
-		_ = ctx.SendFile("./index.html")
+		//_ = ctx.SendFile("./index.html")
+		ctx.Type("html", "utf-8")
+		ctx.Send(_indexHtml)
 	})
 	app.Get("/favicon.ico", func(ctx *fiber.Ctx) {
-		_ = ctx.SendFile("./favicon.ico")
+		//_ = ctx.SendFile("./favicon.ico")
+		ctx.Type("ico")
+		ctx.Send(_faviconIco)
 	})
 	// Login route
 	app.Post("/login", srv.Login)

@@ -97,48 +97,38 @@ cross compilation
 
 Настроил дополнительную конфигурацию для генерации videodir.exe.
 
-dependencies using dep
-----------------------
+Последний регистратор с Windows XP заменили в июле 2020, поддерживать
+`dep` сборку больше не нужно, перешел на `mod`
 
-Windows XP supported only on go 1.10.8 (release 2018/02/16).
-Go 1.10 not supported modules!!
+used golang packages
+--------------------
 
-Компиляция из GOPATH!! при помощи
-`dep /gocode/src/videodir`
+Первый вариант сделал на [github.com/kataras/iris](https://iris-go.com)
+Проблемы вылезли с назойливым предложением обновиться.
 
-Зафиксирована версия Iris v10.7 23 Aug 2018 и часть библиотек
-пришлось прописывать override - для непрямых зависимостей, тоже
-ориентируемся на эту дату.
-
-Большинство перешло на mod!
-
-dependencies using mod
-----------------------
-
-Встроенная система контроля моделей.
-
-```bash
-go mod init github.com/sv99/videodir
-# init vendor directory 
-go mod vendor
-# build with vendor
-go build -mod=vendor
-# update packages version
-gp get -u
-```
-
-Using:
+В результате ушел на [github.com/gofiber/fiber](https://github.com/gofiber/fiber)
+Единственный минус - пока нет httptest клиента, аналогичного имеющемся в `iris`.
  
-[github.com/kataras/iris](https://iris-go.com) WEB framework for REST
- 
-[JWT auth github.com/iris-contrib/middleware/jwt](https://github.com/dgrijalva/jwt-go) + [JWT middleware for iris](github.com/iris-contrib/middleware/jwt) 
-
 [TOML github.com/BurntSushi/toml](https://github.com/BurntSushi/toml) for config
 
 [htpasswd github.com/foomo/htpasswd](https://github.com/foomo/htpasswd) Вернулся к оригинальному
 репозиторию, необходимости в forke больше нет.
 
 [CLI github.com/teris-io/cli](https://github.com/teris-io/cli) for parsing command line
+
+Остается вопрос с логгером, windows сервисом
+ 
+go-bindata
+----------
+
+Embedding index.html and favicon.ico
+
+```bash
+# install go-bindata
+go get -u github.com/go-bindata/go-bindata/...
+# generate assets.go
+go-bindata -pkg videodir -o assets.go -nocompress -nocompress -prefix static static/
+```
 
 config
 ------
@@ -172,7 +162,8 @@ Handlers               | Query Type | Result
 /api/v1/volumes        | GET        | get array volumes with video dirs
 /api/v1/list           | POST       | post { "path": [ "/24-01-18 01/" ] } get directory list, scan all volumes, path may be empty for root directory
 /api/v1/file           | POST       | post { "path": [ "/24-01-18 01/", "0._02" ] } get file, scan all volumes and return file stream, path not may be empty
-/api/v1/remove         | POST       | post { "path": [ "/24-01-18 01/", "0._02" ] } remove path (directory o single file) return {"result": "OK"} or return {"result": "Error"}
+/api/v1/filesize       | POST       | post { "path": [ "/24-01-18 01/", "0._02" ] } get filesize, scan all volumes and return file size
+/api/v1/remove         | POST       | post { "path": [ "/24-01-18 01/", "0._02" ] } remove path (directory o single file) return {"result": "OK"} or {"result": err.Error()}, search path for remove on all volumes
 
 path передаем как массив элементов пути, в противном случае, когда 
 передаем путь из windows система видит ескейп последовательности
@@ -183,7 +174,7 @@ POST api tested in Postman
 security
 --------
 
-Use HTTPS и JWT token
+Use HTTPS и JWT token (SigningMethodHS384)
 
 Для HTTPS использовал RSA ключи, эти же ключи использовал для
 подписи и проверки JWT. RSA используется в JWT библиотеке, 
@@ -269,6 +260,8 @@ todo
 ----
 
 1. Выявлена проблема связанная со сканированием портов и попытками взлома.
-Сервер упал и не поднялся самостоятельно, хотя вроде бы должен был.
-Проблему решил радикально фильтрацией по IP на Mikrotik но осадочек остался.
-Повторно не подключал.
+   Сервер упал и не поднялся самостоятельно, хотя вроде бы должен был.
+   Проблему решил радикально фильтрацией по IP на Mikrotik но осадочек остался.
+   Повторно не подключал.
+3. Windows service на замену NSSM 
+4. Выбрать Logger

@@ -25,7 +25,6 @@ func main() {
 		//return 0
 
 		app.Logger.Infof("Server running on https://localhost:%s", app.Config.ServerAddr)
-		app.Logger.Infof("Server running on http://localhost:%s", app.Config.ServerAddr)
 		app.Serve()
 		return 0
 	})
