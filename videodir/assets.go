@@ -66,7 +66,7 @@ func faviconIco() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "favicon.ico", size: 0, mode: os.FileMode(0), modTime: time.Unix(0, 0)}
+	info := bindataFileInfo{name: "favicon.ico", size: 15086, mode: os.FileMode(420), modTime: time.Unix(1518693442, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -96,7 +96,7 @@ func indexHtml() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "index.html", size: 0, mode: os.FileMode(0), modTime: time.Unix(0, 0)}
+	info := bindataFileInfo{name: "index.html", size: 310, mode: os.FileMode(420), modTime: time.Unix(1595530928, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }

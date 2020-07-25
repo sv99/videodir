@@ -4,9 +4,7 @@
 .idea/
 
 # binary - working build
-videodir
-videodir.exe
-go_test_videodir
+bin/
 
 # https certificats and keys
 server.crt

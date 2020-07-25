@@ -3,12 +3,12 @@ package main
 import (
 	"log"
 	"os"
-	"videodir"
+	"videodir/videodir"
 )
 
 func main() {
 	conf := videodir.DefaultConfig()
-	err := conf.TOML("./videodir.conf")
+	err := conf.TOML("videodir.conf")
 	if err != nil {
 		log.Panicf("Config load problems: %s", err.Error())
 	}
@@ -20,10 +20,6 @@ func main() {
 
 	cliApp := videodir.InitCli(app)
 	cliApp.WithAction(func(args []string, options map[string]string) int {
-
-		//app.Run(iris.TLS(conf.ServerAddr, conf.Cert, conf.Key))
-		//return 0
-
 		app.Logger.Infof("Server running on https://localhost:%s", app.Config.ServerAddr)
 		app.Serve()
 		return 0

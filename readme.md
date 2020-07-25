@@ -100,8 +100,8 @@ cross compilation
 Последний регистратор с Windows XP заменили в июле 2020, поддерживать
 `dep` сборку больше не нужно, перешел на `mod`
 
-used golang packages
---------------------
+golang packages
+---------------
 
 Первый вариант сделал на [github.com/kataras/iris](https://iris-go.com)
 Проблемы вылезли с назойливым предложением обновиться.
@@ -109,14 +109,17 @@ used golang packages
 В результате ушел на [github.com/gofiber/fiber](https://github.com/gofiber/fiber)
 Единственный минус - пока нет httptest клиента, аналогичного имеющемся в `iris`.
  
-[TOML github.com/BurntSushi/toml](https://github.com/BurntSushi/toml) for config
+TOML config file parsing with [github.com/BurntSushi/toml](https://github.com/BurntSushi/toml)
 
-[htpasswd github.com/foomo/htpasswd](https://github.com/foomo/htpasswd) Вернулся к оригинальному
-репозиторию, необходимости в forke больше нет.
+[htpasswd github.com/foomo/htpasswd](https://github.com/foomo/htpasswd)
 
 [CLI github.com/teris-io/cli](https://github.com/teris-io/cli) for parsing command line
 
-Остается вопрос с логгером, windows сервисом
+Embedding index.html and favicon.ico with [go-bindata](https://github.com/go-bindata/go-bindata) package.
+
+Windows service based on `golang.org/x/sys/windows/svc` и [github.com/billgraziano/go-windows-svc](https://github.com/billgraziano/go-windows-svc)
+
+Остается вопрос с логгером
  
 go-bindata
 ----------
