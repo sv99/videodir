@@ -4,8 +4,6 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"github.com/gofiber/fiber"
-	"github.com/gofiber/utils"
 	"io"
 	"io/ioutil"
 	"log"
@@ -14,6 +12,9 @@ import (
 	"os"
 	"path/filepath"
 	"testing"
+
+	"github.com/gofiber/fiber"
+	"github.com/gofiber/utils"
 )
 
 var validUser = UserCredentials{
@@ -43,13 +44,17 @@ func checkRoute(t *testing.T, app *fiber.App, methode string,
 }
 
 func testApp() *AppServer {
-	// test config with test volumes
-	conf := DefaultConfig()
-	err := conf.TOML("./videodir_test.conf")
+	// Working directory for nix - pwd()
+	dir, err := os.Getwd()
 	if err != nil {
-		log.Panicf("Config load problems: %s", err.Error())
+		log.Fatal(err)
 	}
-	app := NewApp(&conf)
+	logger, err := NewLogger(dir, true)
+	if err != nil {
+		log.Fatalf("Config load problems: %v", err)
+	}
+	// test config with test volumes
+	app := NewApp(filepath.Join(dir, "videodir_test.conf"), logger)
 	return app
 }
 

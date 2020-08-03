@@ -103,23 +103,25 @@ cross compilation
 golang packages
 ---------------
 
-Первый вариант сделал на [github.com/kataras/iris](https://iris-go.com)
-Проблемы вылезли с назойливым предложением обновиться.
-
-В результате ушел на [github.com/gofiber/fiber](https://github.com/gofiber/fiber)
-Единственный минус - пока нет httptest клиента, аналогичного имеющемся в `iris`.
+* Первый вариант сделал на [github.com/kataras/iris](https://iris-go.com)
+  Проблемы вылезли с назойливым предложением обновиться.
+  В результате ушел на [github.com/gofiber/fiber](https://github.com/gofiber/fiber).
+  Единственный минус - пока нет httptest клиента, аналогичного имеющемся в `iris`.
  
-TOML config file parsing with [github.com/BurntSushi/toml](https://github.com/BurntSushi/toml)
+* TOML config file parsing with [github.com/BurntSushi/toml](https://github.com/BurntSushi/toml)
 
-[htpasswd github.com/foomo/htpasswd](https://github.com/foomo/htpasswd)
+* [htpasswd github.com/foomo/htpasswd](https://github.com/foomo/htpasswd)
 
-[CLI github.com/teris-io/cli](https://github.com/teris-io/cli) for parsing command line
+* Embedding index.html and favicon.ico with [go-bindata](https://github.com/go-bindata/go-bindata) package.
 
-Embedding index.html and favicon.ico with [go-bindata](https://github.com/go-bindata/go-bindata) package.
+* Windows service based on `golang.org/x/sys/windows/svc` и [github.com/billgraziano/go-windows-svc](https://github.com/billgraziano/go-windows-svc)
 
-Windows service based on `golang.org/x/sys/windows/svc` и [github.com/billgraziano/go-windows-svc](https://github.com/billgraziano/go-windows-svc)
+* [CLI github.com/teris-io/cli](https://github.com/teris-io/cli) - для windows дополнительные команды
+  для управления сервисом.
 
-Остается вопрос с логгером
+* [Logger github.com/rs/zerolog](https://github.com/rs/zerolog)
+
+https://github.com/spf13/cobra
  
 go-bindata
 ----------
@@ -237,6 +239,12 @@ Arguments:
 windows service
 ---------------
 
+Словил проблему с инициализацией приложения. Для правильного конфигурирования
+логгера нужно, чтобы приложение было создано в режиме сервиса (nonInteractive mode).
+Поэтому приложение нельзя инициализировать сразу - есть два режима
+запуска из командной строки и в режиме сервиса. Режим сервиса тоже два варианта
+старт с ключом `start` или из апплета Сервис. 
+
 Использовал для запуска сервиса утилиту [NSSM](http://nssm.cc/).
 Результаты положительные. Можно не использовать свой лог файл.
 NSSM позволяет перенаправить stdout и stderr в файл, в качестве бонуса
@@ -268,3 +276,4 @@ todo
    Повторно не подключал.
 3. Windows service на замену NSSM 
 4. Выбрать Logger
+

@@ -23,14 +23,14 @@ func (srv *AppServer) Login(c *fiber.Ctx) {
 	var user UserCredentials
 	err := json.Unmarshal([]byte(body), &user)
 	if err != nil {
-		srv.Logger.Errorf("Error unmarshal body: %s %s", body, err.Error())
+		srv.Logger.Error().Msgf("Error unmarshal body: %s %v", body, err)
 		c.Status(fiber.StatusBadRequest)
 		return
 	}
 
 	// validate username and password
 	if !srv.validate(&user) {
-		srv.Logger.Errorf("Invalid user: %s", user.Username)
+		srv.Logger.Error().Msgf("Invalid user: %s", user.Username)
 		c.Status(fiber.StatusUnauthorized)
 		return
 	}
@@ -45,7 +45,7 @@ func (srv *AppServer) Login(c *fiber.Ctx) {
 
 	tokenString, err := token.SignedString([]byte(srv.Config.JwtSecret))
 	if err != nil {
-		srv.Logger.Errorf("Error while signing the token: %s", err.Error())
+		srv.Logger.Error().Msgf("Error while signing the token: %v", err)
 		c.Status(fiber.StatusInternalServerError)
 		return
 	}
@@ -54,7 +54,7 @@ func (srv *AppServer) Login(c *fiber.Ctx) {
 }
 
 func (srv *AppServer) validate(user *UserCredentials) bool {
-	if hash, found := srv.passwords[user.Username]; found {
+	if hash, found := srv.Passwords[user.Username]; found {
 		err := bcrypt.CompareHashAndPassword([]byte(hash), []byte(user.Password))
 		if err != nil {
 			return false

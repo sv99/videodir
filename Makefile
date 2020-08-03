@@ -3,29 +3,30 @@
 # for watch using watchexec from brew - github.com/watchexec/watchexec
 #
 .PHONY: all clean data_image help run
-.DEFAULT_GOAL := all
+.DEFAULT_GOAL := help
 
+PROJECTNAME=$(shell basename "$(PWD)")
 CWD = $(shell pwd)
 SERVICE := service
 VIDEODIR := videodir
 VIDEODIR_PID=/tmp/.$(VIDEODIR).pid
 
-## videodir: build binary
+## videodir: Build binary
 $(VIDEODIR): assets.go
 	@-go build -i -o bin/$@ ./cmd/$@/main.go
 	@echo end-build $@
 
-## service: build windows service
+## service: Build windows service
 $(SERVICE):
-	GOOS=windows GOARCH=amd64 go build -i -o bin/videodir_$@.exe ./cmd/$@
+	GOOS=windows GOARCH=386 go build -i -o bin/videodir_$@.exe ./cmd/$@
 
-## clean: clean build cache and remove bin directory
+## clean: Clean build cache and remove bin directory
 clean:
 	go clean
 	go clean -testcache
 	rm -rf bin
 
-## assets.go: Start tracker_data with watch
+# generate assets for static files
 assets.go:
 	@-go-bindata -pkg videodir -o videodir/assets.go -nocompress -nocompress -prefix static static/
 
@@ -50,7 +51,6 @@ watch:
 		-w cmd/ -w videodir/ -i videodir/assets.go \
 		"make $(VIDEODIR) run"
 
-all: help
 ## help: Show commands.
 help: Makefile
 	@echo " Choose a command run in "$(PROJECTNAME)":"

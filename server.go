@@ -2,33 +2,35 @@ package videodir
 
 import (
 	"crypto/tls"
+	"log"
+	"path/filepath"
+
 	"github.com/dgrijalva/jwt-go"
 	"github.com/foomo/htpasswd"
 	"github.com/gofiber/fiber"
 	"github.com/gofiber/helmet"
 	jwtware "github.com/gofiber/jwt"
-	"github.com/gofiber/logger"
 	"github.com/gofiber/recover"
-	"github.com/sirupsen/logrus"
-	"os"
-	"path/filepath"
+	"github.com/rs/zerolog"
 )
 
 const (
-	VERSION  = "0.3"
+	VERSION  = "0.4"
 	HTPASSWD = "htpasswd"
+	CONF_FILE = "videodir.conf"
 )
 
 type AppServer struct {
 	App    *fiber.App
-	Logger *logrus.Logger
+	Logger *zerolog.Logger
 	Config *Config
 
-	passwords htpasswd.HashedPasswords
+	WorkDir   string
+	Passwords htpasswd.HashedPasswords
 }
 
 func (srv *AppServer) Error(c *fiber.Ctx, status int, message string) {
-	srv.Logger.Info(message)
+	srv.Logger.Info().Msg(message)
 	c.SendStatus(status)
 	_ = c.JSON(fiber.Map{"status": status, "error": message})
 }
@@ -41,43 +43,47 @@ func (srv *AppServer) NotFound(c *fiber.Ctx) {
 	)
 }
 
-func newLogFile() *os.File {
-	filename, err := filepath.Abs(filepath.Join("log", "videodir.log"))
+func NewApp(confPath string, zeroLogger *zerolog.Logger) *AppServer {
+	conf := DefaultConfig()
+	err := conf.TOML(confPath)
 	if err != nil {
-		panic(err.Error())
-	}
-	_ = os.Mkdir("log", 0755)
-	// open an output file, this will append to the today's file if server restarted.
-	f, err := os.OpenFile(filename, os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0666)
-	if err != nil {
-		panic(err.Error())
+		log.Panicf("Config load problems: %v", err)
 	}
 
-	return f
-}
-
-func NewApp(conf *Config) *AppServer {
 	app := fiber.New()
 
 	srv := AppServer{
-		Config: conf,
-		App:    app,
+		Config:  &conf,
+		App:     app,
+		WorkDir: filepath.Dir(confPath),
+		Logger: zeroLogger,
 	}
 
-	// init logger
-	srv.InitLogger()
+	// set global log level
+	if srv.Config.Debug {
+		zerolog.SetGlobalLevel(zerolog.DebugLevel)
+	} else {
+		zerolog.SetGlobalLevel(zerolog.InfoLevel)
+	}
+
+	// dump config
+	srv.Logger.Debug().Msgf("Config: %s", confPath)
+	srv.Logger.Debug().Msgf("Cert: %s", srv.Config.Cert)
+	srv.Logger.Debug().Msgf("Key: %s", srv.Config.Key)
+	srv.Logger.Debug().Msgf("Videodirs: %s", srv.Config.VideoDirs)
 
 	// read .htpasswd
-	var err error
-	srv.passwords, err = htpasswd.ParseHtpasswdFile(HTPASSWD)
+	srv.Passwords, err = htpasswd.ParseHtpasswdFile(GetHtPasswdPath(srv.WorkDir))
 	if err != nil {
-		srv.Logger.Fatal("read htpasswd error: ", err.Error())
+		srv.Logger.Fatal().Msg("read htpasswd error: " + err.Error())
 	}
 
-	app.Use(logger.New(logger.Config{
-		//Output: newLogFile(),
-		TimeFormat: "2006-01-02 15:04:05",
-	}))
+	//app.Use(logger.New(logger.Config{
+	//	//Output: newLogFile(),
+	//	TimeFormat: "2006-01-02 15:04:05",
+	//}))
+	app.Use(NewLoggerMiddleware(zeroLogger))
+
 	app.Use(recover.New(recover.Config{
 		Handler: func(c *fiber.Ctx, err error) {
 			c.Status(500)
@@ -132,9 +138,12 @@ func NewApp(conf *Config) *AppServer {
 
 func (srv *AppServer) Serve() {
 	// Create tls certificate
-	cert, err := tls.LoadX509KeyPair(srv.Config.Cert, srv.Config.Key)
+	srv.Logger.Info().Msg("Start server")
+	pathCert := filepath.Join(srv.WorkDir, srv.Config.Cert)
+	pathKey := filepath.Join(srv.WorkDir, srv.Config.Key)
+	cert, err := tls.LoadX509KeyPair(pathCert, pathKey)
 	if err != nil {
-		srv.Logger.Fatalf("Error create tls certificate: %s", err.Error())
+		srv.Logger.Fatal().Msgf("Error create tls certificate: %v", err)
 	}
 
 	config := &tls.Config{
@@ -142,14 +151,15 @@ func (srv *AppServer) Serve() {
 	}
 	err = srv.App.Listen(srv.Config.ServerAddr, config)
 	if err != nil {
-		srv.Logger.Fatalf("Listen error: %s", err.Error())
+		srv.Logger.Fatal().Msgf("Listen error: %v", err)
 	}
+	srv.Logger.Info().Msg("Server stopped")
 }
 
 func (srv *AppServer) Shutdown() {
 	err := srv.App.Shutdown()
 	if err != nil {
-		srv.Logger.Fatal("Shutdown error", err.Error())
+		srv.Logger.Fatal().Msgf("Shutdown error %v", err)
 	}
 }
 

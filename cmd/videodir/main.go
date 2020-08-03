@@ -3,28 +3,56 @@ package main
 import (
 	"log"
 	"os"
-	"videodir/videodir"
+	"path/filepath"
+
+	"github.com/urfave/cli/v2"
+
+	"videodir"
 )
 
 func main() {
-	conf := videodir.DefaultConfig()
-	err := conf.TOML("videodir.conf")
+	// Working directory for nix - pwd()
+	workDir, err := os.Getwd()
 	if err != nil {
-		log.Panicf("Config load problems: %s", err.Error())
+		log.Fatal(err)
 	}
-	app := videodir.NewApp(&conf)
-	// dump config
-	app.Logger.Debugf("Cert: %s", app.Config.Cert)
-	app.Logger.Debugf("Key: %s", app.Config.Key)
-	app.Logger.Debugf("Videodirs: %s", app.Config.VideoDirs)
+	logger, err := videodir.NewLogger(workDir, true)
+	app := videodir.NewApp(filepath.Join(workDir, videodir.CONF_FILE), logger)
 
-	cliApp := videodir.InitCli(app)
-	cliApp.WithAction(func(args []string, options map[string]string) int {
-		app.Logger.Infof("Server running on https://localhost:%s", app.Config.ServerAddr)
-		app.Serve()
-		return 0
-	})
+	cliApp := &cli.App{
+		Name: "videodir",
+		Usage: "video registrator storage backend",
+		Action: func(c *cli.Context) error {
+			app.Serve()
+			return nil
+		},
+		Commands: []*cli.Command{
+			{
+				Name:  "list",
+				Usage: "list users",
+				Action: func(c *cli.Context) error {
+					return videodir.ListUsers(workDir)
+				},
+			},
+			{
+				Name:  "add",
+				Usage: "add or update user",
+				Action: func(c *cli.Context) error {
+					return videodir.AddUser(workDir, c.Args().First(),c.Args().Get(1) )
+				},
+			},
+			{
+				Name:  "remove",
+				Usage: "remove user",
+				Action: func(c *cli.Context) error {
+					return videodir.RemoveUser(workDir, c.Args().First())
+				},
+			},
+		},
+	}
 
-	// Start server
-	os.Exit(cliApp.Run(os.Args, os.Stdout))
+	err = cliApp.Run(os.Args)
+	if err != nil {
+		log.Fatal(err)
+	}
 }

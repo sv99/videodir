@@ -5,7 +5,6 @@ import (
 	"errors"
 	"github.com/gofiber/fiber"
 	"io/ioutil"
-	"log"
 	"os"
 	"path/filepath"
 )
@@ -18,14 +17,14 @@ func (srv *AppServer)  readPath(c *fiber.Ctx) (*Path, error) {
 	var vf Path
 	err := json.Unmarshal([]byte(c.Body()), &vf)
 	if err != nil {
-		log.Printf("File get ReadJSON error: %s %s", c.Body(), err.Error())
+		srv.Logger.Error().Msgf("File get ReadJSON error: %s %v", c.Body(), err)
 		c.Status(fiber.StatusBadRequest)
 		return &vf, err
 	}
 
 	// empty path not available
 	if len(vf.Path) == 0 {
-		log.Printf("File path not specified")
+		srv.Logger.Error().Msg("File path not specified")
 		c.Status(fiber.StatusBadRequest)
 		return &vf, errors.New("file path not specified")
 	}
@@ -36,7 +35,7 @@ func (srv *AppServer) ListPath(c *fiber.Ctx) {
 	var vf Path
 	err := json.Unmarshal([]byte(c.Body()), &vf)
 	if err != nil {
-		log.Printf("File get ReadJSON error: %s %s", c.Body(), err.Error())
+		srv.Logger.Error().Msgf("File get ReadJSON error: %s %v", c.Body(), err)
 		c.Status(fiber.StatusBadRequest)
 		return
 	}
@@ -50,9 +49,10 @@ func (srv *AppServer) ListPath(c *fiber.Ctx) {
 				"Get full path error: " + err.Error())
 			return
 		}
-
+		srv.Logger.Info().Msgf("volume full path %s", vd)
 		// this path not exists in current volume
 		if _, err := os.Stat(vd); os.IsNotExist(err) {
+			srv.Logger.Info().Msgf("volume stat err %v", err)
 			continue
 		}
 
@@ -90,7 +90,7 @@ func (srv *AppServer) PostFile(c *fiber.Ctx) {
 			continue
 		} else {
 			_ = c.SendFile(fp)
-			srv.Logger.Warnf("Send file: %s", fp)
+			srv.Logger.Warn().Msgf("Send file: %s", fp)
 			return
 		}
 	}
@@ -121,7 +121,7 @@ func (srv *AppServer) PostFileSize(c *fiber.Ctx) {
 		}
 		size = stat.Size()
 		_ = c.JSON(fiber.Map{"size": size})
-		srv.Logger.Warnf("Get file size: %s", fp)
+		srv.Logger.Warn().Msgf("Get file size: %s", fp)
 		return
 	}
 	srv.Error(c, fiber.StatusBadRequest,
@@ -156,7 +156,7 @@ func (srv *AppServer) RemoveFile(c *fiber.Ctx) {
 			res = err.Error()
 		}
 	}
+	srv.Logger.Warn().Msgf("Remove path: %s result: %s", fp, res)
 	_ = c.JSON(fiber.Map{"result": res})
-	srv.Logger.Warnf("Remove path: %s result: %s", fp, res)
 }
 

@@ -234,7 +234,7 @@ func RestoreAssets(dir, name string) error {
 	if err != nil {
 		return RestoreAsset(dir, name)
 	}
-	// Dir
+	// WorkDir
 	for _, child := range children {
 		err = RestoreAssets(dir, filepath.Join(name, child))
 		if err != nil {
