@@ -13,12 +13,13 @@ VIDEODIR_PID=/tmp/.$(VIDEODIR).pid
 
 ## videodir: Build binary
 $(VIDEODIR): assets.go
-	@-go build -i -o bin/$@ ./cmd/$@/main.go
+	@-go build -o bin/$@ ./cmd/$@/main.go
 	@echo end-build $@
 
 ## service: Build windows service
 $(SERVICE):
-	GOOS=windows GOARCH=386 go build -i -o bin/videodir_$@.exe ./cmd/$@
+	GOOS=windows GOARCH=386 go build -o bin/videodir_$@.exe ./cmd/$@
+	GOOS=windows GOARCH=amd64 go build -o bin/videodir_$@_amd64.exe ./cmd/$@
 
 ## clean: Clean build cache and remove bin directory
 clean:
@@ -28,7 +29,7 @@ clean:
 
 # generate assets for static files
 assets.go:
-	@-go-bindata -pkg videodir -o videodir/assets.go -nocompress -nocompress -prefix static static/
+	@-go-bindata -pkg videodir -o assets.go -nocompress -nocompress -prefix static static/
 
 ## start: Start videodir with watch
 start:
