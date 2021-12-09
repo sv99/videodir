@@ -2,6 +2,7 @@
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
 
+//go:build windows
 // +build windows
 
 package main
@@ -18,7 +19,7 @@ import (
 	"videodir"
 )
 
-func main()  {
+func main() {
 	// This is the name you will use for the NET START command
 	const svcName = "videodir"
 	// This is the name that will appear in the Services control panel
@@ -47,7 +48,7 @@ func main()  {
 	}
 
 	cliApp := &cli.App{
-		Name: "videodir",
+		Name:  "videodir",
 		Usage: "video registrator storage backend",
 		//Action: func(c *cli.Context) error {
 		//	fmt.Println("Hello friend!")
@@ -55,9 +56,9 @@ func main()  {
 		//},
 		Commands: []*cli.Command{
 			{
-				Name:    "install",
-				Usage:   "install service",
-				Action:  func(c *cli.Context) error {
+				Name:  "install",
+				Usage: "install service",
+				Action: func(c *cli.Context) error {
 					err := service.Install()
 					if err != nil {
 						return fmt.Errorf("install error %v", err)
@@ -67,9 +68,9 @@ func main()  {
 				},
 			},
 			{
-				Name:    "remove",
-				Usage:   "remove service",
-				Action:  func(c *cli.Context) error {
+				Name:  "remove",
+				Usage: "remove service",
+				Action: func(c *cli.Context) error {
 					err := service.Remove()
 					if err != nil {
 						return fmt.Errorf("remove error %v", err)
@@ -79,9 +80,9 @@ func main()  {
 				},
 			},
 			{
-				Name:    "start",
-				Usage:   "start service",
-				Action:  func(c *cli.Context) error {
+				Name:  "start",
+				Usage: "start service",
+				Action: func(c *cli.Context) error {
 					err := service.Start()
 					if err != nil {
 						return fmt.Errorf("start error %v", err)
@@ -91,9 +92,9 @@ func main()  {
 				},
 			},
 			{
-				Name:    "stop",
-				Usage:   "stop service",
-				Action:  func(c *cli.Context) error {
+				Name:  "stop",
+				Usage: "stop service",
+				Action: func(c *cli.Context) error {
 					err := service.Control(svc.Stop, svc.Stopped)
 					if err != nil {
 						return fmt.Errorf("stop error %v", err)
@@ -103,15 +104,15 @@ func main()  {
 				},
 			},
 			{
-				Name:    "debug",
-				Usage:   "debug service",
-				Action:  func(c *cli.Context) error {
+				Name:  "debug",
+				Usage: "debug service",
+				Action: func(c *cli.Context) error {
 					return service.Run()
 				},
 			},
 			{
-				Name:        "users",
-				Usage:       "manage htpasswd",
+				Name:  "users",
+				Usage: "manage htpasswd",
 				Subcommands: []*cli.Command{
 					{
 						Name:  "list",
@@ -124,7 +125,7 @@ func main()  {
 						Name:  "add",
 						Usage: "add or update user",
 						Action: func(c *cli.Context) error {
-							return videodir.AddUser(workDir, c.Args().First(),c.Args().Get(1) )
+							return videodir.AddUser(workDir, c.Args().First(), c.Args().Get(1))
 						},
 					},
 					{

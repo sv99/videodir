@@ -2,6 +2,7 @@
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
 
+//go:build windows
 // +build windows
 
 package videodir
@@ -20,16 +21,16 @@ import (
 
 var elog debug.Log
 
-type MyService struct{
-	Name string
-	Desc string
+type MyService struct {
+	Name  string
+	Desc  string
 	Debug bool
 }
 
 func NewService(name, desc string, isInteractive bool) *MyService {
 	return &MyService{
-		Name: name,
-		Desc: desc,
+		Name:  name,
+		Desc:  desc,
 		Debug: isInteractive,
 	}
 }
@@ -203,4 +204,3 @@ func (service *MyService) Control(c svc.Cmd, to svc.State) error {
 	}
 	return nil
 }
-

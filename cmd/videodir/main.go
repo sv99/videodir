@@ -20,7 +20,7 @@ func main() {
 	app := videodir.NewApp(filepath.Join(workDir, videodir.CONF_FILE), logger)
 
 	cliApp := &cli.App{
-		Name: "videodir",
+		Name:  "videodir",
 		Usage: "video registrator storage backend",
 		Action: func(c *cli.Context) error {
 			app.Serve()
@@ -38,7 +38,7 @@ func main() {
 				Name:  "add",
 				Usage: "add or update user",
 				Action: func(c *cli.Context) error {
-					return videodir.AddUser(workDir, c.Args().First(),c.Args().Get(1) )
+					return videodir.AddUser(workDir, c.Args().First(), c.Args().Get(1))
 				},
 			},
 			{

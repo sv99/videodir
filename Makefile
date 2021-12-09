@@ -18,13 +18,13 @@ $(VIDEODIR): assets.go
 	@echo end-build $@
 
 ## service: Build windows service
-$(SERVICE):
+$(SERVICE): assets.go
 	GOOS=windows GOARCH=386 go build -o bin/videodir_$@.exe ./cmd/$@
 	GOOS=windows GOARCH=amd64 go build -o bin/videodir_$@_amd64.exe ./cmd/$@
 	@echo end-build $@
 
 ## linux: Build linux binary
-$(LINUX):
+$(LINUX): assets.go
 	GOOS=linux GOARCH=386 go build -o bin/videodir_$@ ./cmd/videodir
 	GOOS=linux GOARCH=amd64 go build -o bin/videodir_$@_amd64 ./cmd/videodir
 	@echo end-build $@
