@@ -1,22 +1,22 @@
 package videodir
 
 import (
-	"crypto/tls"
 	"log"
+	"os"
 	"path/filepath"
 
-	"github.com/dgrijalva/jwt-go"
 	"github.com/foomo/htpasswd"
-	"github.com/gofiber/fiber"
-	"github.com/gofiber/helmet"
-	jwtware "github.com/gofiber/jwt"
-	"github.com/gofiber/recover"
+	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/middleware/recover"
+	"github.com/gofiber/helmet/v2"
+	jwtware "github.com/gofiber/jwt/v3"
+	"github.com/golang-jwt/jwt/v4"
 	"github.com/rs/zerolog"
 )
 
 const (
-	VERSION  = "0.4"
-	HTPASSWD = "htpasswd"
+	VERSION   = "0.5"
+	HTPASSWD  = "htpasswd"
 	CONF_FILE = "videodir.conf"
 )
 
@@ -29,14 +29,14 @@ type AppServer struct {
 	Passwords htpasswd.HashedPasswords
 }
 
-func (srv *AppServer) Error(c *fiber.Ctx, status int, message string) {
+func (srv *AppServer) Error(c *fiber.Ctx, status int, message string) error {
 	srv.Logger.Info().Msg(message)
-	c.SendStatus(status)
-	_ = c.JSON(fiber.Map{"status": status, "error": message})
+	_ = c.SendStatus(status)
+	return c.JSON(fiber.Map{"status": status, "error": message})
 }
 
-func (srv *AppServer) NotFound(c *fiber.Ctx) {
-	srv.Error(
+func (srv *AppServer) NotFound(c *fiber.Ctx) error {
+	return srv.Error(
 		c,
 		fiber.StatusNotFound,
 		"Sorry, but the page you were looking for could not be found.",
@@ -56,7 +56,7 @@ func NewApp(confPath string, zeroLogger *zerolog.Logger) *AppServer {
 		Config:  &conf,
 		App:     app,
 		WorkDir: filepath.Dir(confPath),
-		Logger: zeroLogger,
+		Logger:  zeroLogger,
 	}
 
 	// set global log level
@@ -72,8 +72,18 @@ func NewApp(confPath string, zeroLogger *zerolog.Logger) *AppServer {
 	srv.Logger.Debug().Msgf("Key: %s", srv.Config.Key)
 	srv.Logger.Debug().Msgf("Videodirs: %s", srv.Config.VideoDirs)
 
-	// read .htpasswd
-	srv.Passwords, err = htpasswd.ParseHtpasswdFile(GetHtPasswdPath(srv.WorkDir))
+	// check is htpasswd exists
+	htpass := GetHtPasswdPath(srv.WorkDir)
+	if _, err := os.Stat(htpass); os.IsNotExist(err) {
+		srv.Logger.Debug().Msg("htpasswd does not exist")
+		file, err := os.Create(htpass)
+		if err != nil {
+			log.Fatal(err)
+		}
+		defer file.Close()
+	}
+	// read htpasswd
+	srv.Passwords, err = htpasswd.ParseHtpasswdFile(htpass)
 	if err != nil {
 		srv.Logger.Fatal().Msg("read htpasswd error: " + err.Error())
 	}
@@ -84,24 +94,19 @@ func NewApp(confPath string, zeroLogger *zerolog.Logger) *AppServer {
 	//}))
 	app.Use(NewLoggerMiddleware(zeroLogger))
 
-	app.Use(recover.New(recover.Config{
-		Handler: func(c *fiber.Ctx, err error) {
-			c.Status(500)
-			_ = c.JSON(fiber.Map{"Message": err.Error()})
-		},
-	}))
+	app.Use(recover.New())
 	app.Use(helmet.New())
 
 	// index - login not require
-	app.Get("/", func(ctx *fiber.Ctx) {
+	app.Get("/", func(ctx *fiber.Ctx) error {
 		//_ = ctx.SendFile("./index.html")
 		ctx.Type("html", "utf-8")
-		ctx.Send(_indexHtml)
+		return ctx.Send(_indexHtml)
 	})
-	app.Get("/favicon.ico", func(ctx *fiber.Ctx) {
+	app.Get("/favicon.ico", func(ctx *fiber.Ctx) error {
 		//_ = ctx.SendFile("./favicon.ico")
 		ctx.Type("ico")
-		ctx.Send(_faviconIco)
+		return ctx.Send(_faviconIco)
 	})
 	// Login route
 	app.Post("/login", srv.Login)
@@ -119,11 +124,11 @@ func NewApp(confPath string, zeroLogger *zerolog.Logger) *AppServer {
 	// API
 	v1 := app.Group("/api/v1")
 
-	v1.Get("/version", func(ctx *fiber.Ctx) {
-		_ = ctx.JSON(fiber.Map{"version": VERSION})
+	v1.Get("/version", func(ctx *fiber.Ctx) error {
+		return ctx.JSON(fiber.Map{"version": VERSION})
 	})
-	v1.Get("/volumes", func(ctx *fiber.Ctx) {
-		_ = ctx.JSON(conf.VideoDirs)
+	v1.Get("/volumes", func(ctx *fiber.Ctx) error {
+		return ctx.JSON(conf.VideoDirs)
 	})
 
 	v1.Post("/list", srv.ListPath)
@@ -141,15 +146,8 @@ func (srv *AppServer) Serve() {
 	srv.Logger.Info().Msg("Start server")
 	pathCert := filepath.Join(srv.WorkDir, srv.Config.Cert)
 	pathKey := filepath.Join(srv.WorkDir, srv.Config.Key)
-	cert, err := tls.LoadX509KeyPair(pathCert, pathKey)
-	if err != nil {
-		srv.Logger.Fatal().Msgf("Error create tls certificate: %v", err)
-	}
 
-	config := &tls.Config{
-		Certificates: []tls.Certificate{cert},
-	}
-	err = srv.App.Listen(srv.Config.ServerAddr, config)
+	err := srv.App.ListenTLS(srv.Config.ServerAddr, pathCert, pathKey)
 	if err != nil {
 		srv.Logger.Fatal().Msgf("Listen error: %v", err)
 	}
@@ -163,14 +161,20 @@ func (srv *AppServer) Shutdown() {
 	}
 }
 
-func jwtSuccessHandler(c *fiber.Ctx) {
+func jwtSuccessHandler(c *fiber.Ctx) error {
 	token := c.Locals("token").(*jwt.Token)
 	claims := token.Claims.(jwt.MapClaims)
 	c.Locals("username", claims["username"].(string))
-	c.Next()
+	return c.Next()
 }
 
-func jwtErrorHandler(c *fiber.Ctx, _ error) {
-	c.Status(fiber.StatusUnauthorized)
-	c.SendString("Invalid, missing, malformed  or expired JWT")
+func jwtErrorHandler(c *fiber.Ctx, err error) error {
+	if err.Error() == "Missing or malformed JWT" {
+		return c.Status(fiber.StatusBadRequest).
+			JSON(fiber.Map{"status": "error", "message": "Missing or malformed JWT", "data": nil})
+		// SendString("Missing or malformed JWT")
+	}
+	return c.Status(fiber.StatusUnauthorized).
+		JSON(fiber.Map{"status": "error", "message": "Invalid or expired JWT", "data": nil})
+	// SendString("Invalid, missing, malformed  or expired JWT")
 }

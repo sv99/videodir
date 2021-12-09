@@ -2,8 +2,8 @@ package videodir
 
 import (
 	"encoding/json"
-	"github.com/dgrijalva/jwt-go"
-	"github.com/gofiber/fiber"
+	"github.com/gofiber/fiber/v2"
+	"github.com/golang-jwt/jwt/v4"
 	"golang.org/x/crypto/bcrypt"
 	"time"
 )
@@ -17,22 +17,22 @@ type Token struct {
 	Token string `json:"token"`
 }
 
-func (srv *AppServer) Login(c *fiber.Ctx) {
+func (srv *AppServer) Login(c *fiber.Ctx) error {
 	body := c.Body()
 	//log.Printf("body: %s", body)
 	var user UserCredentials
-	err := json.Unmarshal([]byte(body), &user)
+	var err = json.Unmarshal([]byte(body), &user)
 	if err != nil {
 		srv.Logger.Error().Msgf("Error unmarshal body: %s %v", body, err)
 		c.Status(fiber.StatusBadRequest)
-		return
+		return err
 	}
 
 	// validate username and password
 	if !srv.validate(&user) {
 		srv.Logger.Error().Msgf("Invalid user: %s", user.Username)
 		c.Status(fiber.StatusUnauthorized)
-		return
+		return err
 	}
 
 	// Create token
@@ -47,10 +47,10 @@ func (srv *AppServer) Login(c *fiber.Ctx) {
 	if err != nil {
 		srv.Logger.Error().Msgf("Error while signing the token: %v", err)
 		c.Status(fiber.StatusInternalServerError)
-		return
+		return err
 	}
 
-	_ = c.JSON(Token{tokenString})
+	return c.JSON(Token{tokenString})
 }
 
 func (srv *AppServer) validate(user *UserCredentials) bool {

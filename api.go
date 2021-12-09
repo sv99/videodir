@@ -3,19 +3,20 @@ package videodir
 import (
 	"encoding/json"
 	"errors"
-	"github.com/gofiber/fiber"
 	"io/ioutil"
 	"os"
 	"path/filepath"
+
+	"github.com/gofiber/fiber/v2"
 )
 
 type Path struct {
 	Path []string `json:"path"`
 }
 
-func (srv *AppServer)  readPath(c *fiber.Ctx) (*Path, error) {
+func (srv *AppServer) readPath(c *fiber.Ctx) (*Path, error) {
 	var vf Path
-	err := json.Unmarshal([]byte(c.Body()), &vf)
+	err := json.Unmarshal(c.Body(), &vf)
 	if err != nil {
 		srv.Logger.Error().Msgf("File get ReadJSON error: %s %v", c.Body(), err)
 		c.Status(fiber.StatusBadRequest)
@@ -31,13 +32,13 @@ func (srv *AppServer)  readPath(c *fiber.Ctx) (*Path, error) {
 	return &vf, nil
 }
 
-func (srv *AppServer) ListPath(c *fiber.Ctx) {
+func (srv *AppServer) ListPath(c *fiber.Ctx) error {
 	var vf Path
-	err := json.Unmarshal([]byte(c.Body()), &vf)
+	err := json.Unmarshal(c.Body(), &vf)
 	if err != nil {
 		srv.Logger.Error().Msgf("File get ReadJSON error: %s %v", c.Body(), err)
 		c.Status(fiber.StatusBadRequest)
-		return
+		return err
 	}
 
 	list := make([]string, 0, 10)
@@ -45,9 +46,9 @@ func (srv *AppServer) ListPath(c *fiber.Ctx) {
 	for _, volume := range srv.Config.VideoDirs {
 		vd, err := filepath.Abs(filepath.Join(volume, filepath.Join(vf.Path...)))
 		if err != nil {
-			srv.Error(c, fiber.StatusInternalServerError,
-				"Get full path error: " + err.Error())
-			return
+			_ = srv.Error(c, fiber.StatusInternalServerError,
+				"Get full path error: "+err.Error())
+			return err
 		}
 		srv.Logger.Info().Msgf("volume full path %s", vd)
 		// this path not exists in current volume
@@ -58,22 +59,22 @@ func (srv *AppServer) ListPath(c *fiber.Ctx) {
 
 		files, err := ioutil.ReadDir(vd)
 		if err != nil {
-			srv.Error(c, fiber.StatusInternalServerError,
-				"Read dir error: " + err.Error())
-			return
+			_ = srv.Error(c, fiber.StatusInternalServerError,
+				"Read dir error: "+err.Error())
+			return err
 		}
 
 		for _, f := range files {
 			list = append(list, f.Name())
 		}
 	}
-	_ = c.JSON(list)
+	return c.JSON(list)
 }
 
-func (srv *AppServer) PostFile(c *fiber.Ctx) {
+func (srv *AppServer) PostFile(c *fiber.Ctx) error {
 	vf, err := srv.readPath(c)
 	if err != nil {
-		return
+		return err
 	}
 
 	var fp = ""
@@ -81,27 +82,27 @@ func (srv *AppServer) PostFile(c *fiber.Ctx) {
 
 		fp, err = filepath.Abs(filepath.Join(volume, filepath.Join(vf.Path...)))
 		if err != nil {
-			srv.Error(c, fiber.StatusInternalServerError,
-				"Video file get full path error: " + err.Error())
-			return
+			_ = srv.Error(c, fiber.StatusInternalServerError,
+				"Video file get full path error: "+err.Error())
+			return err
 		}
 
 		if _, err := os.Stat(fp); os.IsNotExist(err) {
 			continue
 		} else {
-			_ = c.SendFile(fp)
+			err = c.SendFile(fp)
 			srv.Logger.Warn().Msgf("Send file: %s", fp)
-			return
+			return err
 		}
 	}
-	srv.Error(c, fiber.StatusBadRequest,
+	return srv.Error(c, fiber.StatusBadRequest,
 		"Video file not found")
 }
 
-func (srv *AppServer) PostFileSize(c *fiber.Ctx) {
+func (srv *AppServer) PostFileSize(c *fiber.Ctx) error {
 	vf, err := srv.readPath(c)
 	if err != nil {
-		return
+		return err
 	}
 
 	var fp = ""
@@ -110,9 +111,9 @@ func (srv *AppServer) PostFileSize(c *fiber.Ctx) {
 
 		fp, err = filepath.Abs(filepath.Join(volume, filepath.Join(vf.Path...)))
 		if err != nil {
-			srv.Error(c, fiber.StatusBadRequest,
-				"Video file get full path error: " + err.Error())
-			return
+			_ = srv.Error(c, fiber.StatusBadRequest,
+				"Video file get full path error: "+err.Error())
+			return err
 		}
 
 		stat, err := os.Stat(fp)
@@ -122,18 +123,18 @@ func (srv *AppServer) PostFileSize(c *fiber.Ctx) {
 		size = stat.Size()
 		_ = c.JSON(fiber.Map{"size": size})
 		srv.Logger.Warn().Msgf("Get file size: %s", fp)
-		return
+		return err
 	}
-	srv.Error(c, fiber.StatusBadRequest,
+	return srv.Error(c, fiber.StatusBadRequest,
 		"Video file not found")
 }
 
-// remove file or directory
+// RemoveFile remove file or directory
 // find path for remove on all volumes
-func (srv *AppServer) RemoveFile(c *fiber.Ctx) {
+func (srv *AppServer) RemoveFile(c *fiber.Ctx) error {
 	vf, err := srv.readPath(c)
 	if err != nil {
-		return
+		return err
 	}
 
 	var fp = ""
@@ -142,9 +143,9 @@ func (srv *AppServer) RemoveFile(c *fiber.Ctx) {
 
 		fp, err = filepath.Abs(filepath.Join(volume, filepath.Join(vf.Path...)))
 		if err != nil {
-			srv.Error(c, fiber.StatusBadRequest,
-				"Video file get full path error: " + err.Error())
-			return
+			_ = srv.Error(c, fiber.StatusBadRequest,
+				"Video file get full path error: "+err.Error())
+			return err
 		}
 
 		if _, err := os.Stat(fp); os.IsNotExist(err) {
@@ -157,6 +158,5 @@ func (srv *AppServer) RemoveFile(c *fiber.Ctx) {
 		}
 	}
 	srv.Logger.Warn().Msgf("Remove path: %s result: %s", fp, res)
-	_ = c.JSON(fiber.Map{"result": res})
+	return c.JSON(fiber.Map{"result": res})
 }
-

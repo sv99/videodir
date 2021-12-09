@@ -1,0 +1,14 @@
+# /etc/systemd/system/videodir.service
+[Unit]
+Description=Run videodir at startup
+After=network.target
+
+[Service]
+Type=simple
+User=admin
+WorkingDirectory=/volume1/homes/admin/videodir
+ExecStart=videodir_linux_amd64
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target

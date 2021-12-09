@@ -13,7 +13,7 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/gofiber/fiber"
+	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/utils"
 )
 
@@ -65,12 +65,12 @@ func TestRoutesNoAuth(t *testing.T) {
 	checkRoute(t, app.App, "GET", "/", nil, fiber.StatusOK)
 
 	// api without auth
-	checkRoute(t, app.App, "GET", "/api/v1/version", nil, fiber.StatusUnauthorized)
-	checkRoute(t, app.App, "GET", "/api/v1/volumes", nil, fiber.StatusUnauthorized)
-	checkRoute(t, app.App, "POST", "/api/v1/list", nil, fiber.StatusUnauthorized)
-	checkRoute(t, app.App, "POST", "/api/v1/file", nil, fiber.StatusUnauthorized)
-	checkRoute(t, app.App, "POST", "/api/v1/filesize", nil, fiber.StatusUnauthorized)
-	checkRoute(t, app.App, "POST", "/api/v1/remove", nil, fiber.StatusUnauthorized)
+	checkRoute(t, app.App, "GET", "/api/v1/version", nil, fiber.StatusBadRequest)
+	checkRoute(t, app.App, "GET", "/api/v1/volumes", nil, fiber.StatusBadRequest)
+	checkRoute(t, app.App, "POST", "/api/v1/list", nil, fiber.StatusBadRequest)
+	checkRoute(t, app.App, "POST", "/api/v1/file", nil, fiber.StatusBadRequest)
+	checkRoute(t, app.App, "POST", "/api/v1/filesize", nil, fiber.StatusBadRequest)
+	checkRoute(t, app.App, "POST", "/api/v1/remove", nil, fiber.StatusBadRequest)
 }
 
 func getToken(t *testing.T, app *fiber.App) string {
@@ -101,7 +101,7 @@ func TestRoutesLogin(t *testing.T) {
 
 func getAuthRequest(methode string, target string, body io.Reader, token string) *http.Request {
 	req := httptest.NewRequest(methode, target, body)
-	req.Header.Set("Authorization", "Bearer " + token)
+	req.Header.Set("Authorization", "Bearer "+token)
 	return req
 }
 
@@ -140,7 +140,7 @@ func createCamFolder(path, cam string, first int, count int) {
 	_ = os.MkdirAll(p, os.ModePerm)
 
 	for i := 0; i < count; i++ {
-		file, err := os.Create(filepath.Join(p, fmt.Sprintf("%s%02d.rec", videoFile, i + first)))
+		file, err := os.Create(filepath.Join(p, fmt.Sprintf("%s%02d.rec", videoFile, i+first)))
 		if isError(err) {
 			return
 		}
@@ -229,7 +229,7 @@ func TestGetFile(t *testing.T) {
 	fmt.Println(filesize)
 	utils.AssertEqual(t, 5, filesize["size"])
 
-    // get not exists file size
+	// get not exists file size
 	req = getAuthRequest("POST", "/api/v1/filesize", bytes.NewReader(rawRecord10), token)
 	resp, err = app.App.Test(req)
 	utils.AssertEqual(t, nil, err)

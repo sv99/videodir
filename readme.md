@@ -116,16 +116,12 @@ videodir
 cross compilation
 -----------------
 
-Целевая система Windows.
-
-    # compiling with additional environment variable
-    GOOS=windows GOARCH=386 go build -o videodir.exe
-    GOOS=windows GOARCH=amd64 go build -o videodir.exe
-
-Настроил дополнительную конфигурацию для генерации `videodir.exe`.
-
-Последний регистратор с Windows XP заменили в июле 2020, поддерживать
-`dep` сборку больше не нужно, перешел на `mod`
+```bash
+# windows service
+make service
+# linux binary
+make linux
+```
 
 golang packages
 ---------------
@@ -148,8 +144,8 @@ golang packages
 
 * [Logger github.com/rs/zerolog](https://github.com/rs/zerolog)
 
-https://github.com/spf13/cobra
- 
+* [Еще один вариант CLI github.com/spf13/cobra](https://github.com/spf13/cobra)
+
 go-bindata
 ----------
 
@@ -272,27 +268,35 @@ windows service
 запуска из командной строки и в режиме сервиса. Режим сервиса тоже два варианта
 старт с ключом `start` или из апплета Сервис. 
 
-Использовал для запуска сервиса утилиту [NSSM](http://nssm.cc/).
-Результаты положительные. Можно не использовать свой лог файл.
-NSSM позволяет перенаправить stdout и stderr в файл, в качестве бонуса
-возможность настроить ротацию логов, правда она срабатывает только
-при рестарте сервиса.
+synology service
+----------------
 
-Первоначальное тестирование на предмет утечек памяти дало положительные
-результаты. Память освобождается не очень быстро, но предсказуемо.
-При пересылке файлов программа не занимала больше 20Мб.
+Возникла необходимость забирать архив из Synology SurveillanceStation.
 
-    nssm install videodir C:/tools/videodir/videodir.exe
-    # GUI edit params
-    nssm edit videodir
-    nssm remove videodir
+DSM7.0 использует `systemd`
 
-    nssm start videodir
-    nssm stop videodir
-    nssm restart videodir
-    
-Альтернативный вариант - полноценный сервис Windows на базе
-пакета [svc](https://github.com/golang/sys/tree/master/windows/svc)
+Копируем нужные файлы в домашний каталог пользователя `admin`
+
+```
+ls ~/videodir
+log/
+htpasswd
+videodir_linux_amd64
+videodir.config
+videodir.service
+server.crt
+server.key
+```
+
+Теперь можно попытаться запустить сервис.
+
+```bash
+systemctl start videodir.service
+systemctl stop videodir.service
+systemctl status videodir.service
+
+systemctl enable videodir.service
+```
 
 todo
 ----
@@ -301,6 +305,3 @@ todo
    Сервер упал и не поднялся самостоятельно, хотя вроде бы должен был.
    Проблему решил радикально фильтрацией по IP на Mikrotik но осадочек остался.
    Повторно не подключал.
-3. Windows service на замену NSSM 
-4. Выбрать Logger
-

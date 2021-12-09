@@ -12,17 +12,16 @@ type Config struct {
 	Key        string
 	JwtSecret  string
 	VideoDirs  []string
-
 }
 
 func DefaultConfig() Config {
 	return Config{
-		Debug:   	false,
-		ServerAddr: "8443",
+		Debug:      false,
+		ServerAddr: ":8443",
 		Cert:       "server.crt",
 		Key:        "server.key",
-		JwtSecret:	"secret",
-		VideoDirs:	[]string{},
+		JwtSecret:  "secret",
+		VideoDirs:  []string{},
 	}
 }
 
