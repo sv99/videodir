@@ -21,6 +21,8 @@ videodir
 Структура каталогов ITV
 -----------------------
 
+Файлы внутри каталогов заполнены короткими случайными строками при помощи скрипта `clean_video_data.pl`.
+
     VIDEO
     ├── 24-01-18 01
     │   ├── 1._15
@@ -153,7 +155,7 @@ Embedding index.html and favicon.ico
 
 ```bash
 # install go-bindata
-go get -u github.com/go-bindata/go-bindata/...
+go install -a -v github.com/go-bindata/go-bindata/...@latest
 # generate assets.go
 go-bindata -pkg videodir -o assets.go -nocompress -nocompress -prefix static static/
 ```

@@ -20,6 +20,7 @@ require (
 	github.com/GehirnInc/crypt v0.0.0-20190301055215-6c0105aabd46 // indirect
 	github.com/andybalholm/brotli v1.0.2 // indirect
 	github.com/cpuguy83/go-md2man/v2 v2.0.0-20190314233015-f79a8a8ca69d // indirect
+	github.com/go-bindata/go-bindata v3.1.2+incompatible // indirect
 	github.com/klauspost/compress v1.13.4 // indirect
 	github.com/russross/blackfriday/v2 v2.0.1 // indirect
 	github.com/shurcooL/sanitized_anchor_name v1.0.0 // indirect
